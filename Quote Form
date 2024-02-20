@@ -1,1 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gas Order Form</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Gas Order Form</h1>
+    <form id="gasOrderForm">
+      <div class="form-group">
+        <label for="gallonsRequested">Gallons Requested:</label>
+        <input type="number" id="gallonsRequested" name="gallonsRequested" min="1" required>
+      </div>
+      <div class="form-group">
+        <label for="dateRequested">Date Requested:</label>
+        <input type="date" id="dateRequested" name="dateRequested" min="2024-01-01" required>
+      </div>
+      <div class="form-group">
+        <label for="pricePerGallon">Price per Gallon:</label>
+        <input type="text" id="pricePerGallon" name="pricePerGallon" value="$0.50" readonly>
+      </div>
+      <div class="form-group">
+        <label for="totalPrice">Total Amount Due:</label>
+        <input type="text" id="totalPrice" name="totalPrice" readonly>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
 
