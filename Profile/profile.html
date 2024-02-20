@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>User Profile</h1>
+    <div class="profile-info">
+      <h2>User Details</h2>
+      <p><strong>Full Name:</strong> John Doe</p>
+      <p><strong>Address:</strong> 123 Main St, City, ST 12345</p>
+    </div>
+    <button onclick="updateMyInformation()">Update My Information</button>
+    <div id="recentOrders">
+      <h2>Fuel Quote History</h2>
+      <!-- Table for fuel quote history will be here -->
+    </div>
+    <p id="noOrdersMessage" style="display: none;">You have made no fuel requests. If you would like to request fuel, click the button below.</p>
+    <button onclick="redirectToFuelQuoteForm()">Request Fuel</button>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
