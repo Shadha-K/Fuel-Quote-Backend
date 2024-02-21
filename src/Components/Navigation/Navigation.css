@@ -1,0 +1,36 @@
+/* navigation.css */
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #3c009D; /* Match the theme color */
+    height: 80px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+  }
+  
+  li {
+    font-size: 18px;
+    color: #fff; /* Match the theme color */
+  }
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+    padding: 10px;
+    transition: background 0.3s;
+  }
+  
+  a:hover {
+    background: #4c00b4; /* Match the theme color */
+    border-radius: 6px;
+  }
+  
