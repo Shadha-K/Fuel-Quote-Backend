@@ -1,13 +1,16 @@
-/* navigation.css */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; 
+  margin: 0; 
+}
 
 nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #3c009D; /* Match the theme color */
+    background: #3c009D; 
     height: 80px;
-    position: fixed;
-    bottom: 0;
     width: 100%;
   }
   
@@ -19,7 +22,7 @@ nav {
   
   li {
     font-size: 18px;
-    color: #fff; /* Match the theme color */
+    color: #fff; 
   }
   
   a {
@@ -30,7 +33,6 @@ nav {
   }
   
   a:hover {
-    background: #4c00b4; /* Match the theme color */
+    background: #4c00b4; 
     border-radius: 6px;
   }
-  

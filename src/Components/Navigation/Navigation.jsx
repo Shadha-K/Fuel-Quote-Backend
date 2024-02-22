@@ -5,11 +5,11 @@ import './Navigation.css';
 
 function Navigation() {
   return (
-    <div>
+    <div className="body">
       <Link to="/login-signup">Login/Signup</Link>
       <Link to="/registration">Registration</Link>
-      <Link to="/profile">Profile</Link>
-      <Link to="/fuel-request">Fuel Request</Link>
+      <Link to="/userprofile">UserProfile</Link>
+      <Link to="/userfuelrequest">FuelRequest</Link>
     </div>
   );
 }

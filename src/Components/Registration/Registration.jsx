@@ -75,7 +75,6 @@ const ClientProfileForm = () => {
   const handleStateChange = (e) => {
     setState(e.target.value);
 
-    // Clear state error when a valid selection is made
     if (e.target.value !== '') {
       setStateError('');
     }
@@ -97,7 +96,6 @@ const ClientProfileForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate the form before submission
     if (
       !fullName.trim() ||
       !address1.trim() ||
@@ -109,15 +107,12 @@ const ClientProfileForm = () => {
       return;
     }
 
-    // Perform further actions with the form data (e.g., send to server)
     console.log('Client Full Name:', fullName);
     console.log('Address 1:', address1);
     console.log('Address 2:', address2);
     console.log('City:', city);
     console.log('State:', state);
     console.log('Zipcode:', zipcode);
-
-    // You can add additional logic here, such as sending the data to a server
   };
 
   return (
@@ -199,6 +194,10 @@ const ClientProfileForm = () => {
       </div>
       </div>
 
+        <p className="redirect-text">
+          You will be redirected to the login page after registering.
+        </p>
+
       <div className = "submit-container">
         <button type="submit" className="submit-button">
           Submit
@@ -207,76 +206,6 @@ const ClientProfileForm = () => {
     </form>
   );
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="fullName">Client Full Name:</label>
-        <input
-          type="text"
-          id="fullName"
-          value={fullName}
-          onChange={handleFullNameChange}
-        />
-        {fullNameError && <div className='error'>{fullNameError}</div>}
-      </div>
-
-      <div>
-        <label htmlFor="address1">Address 1:</label>
-        <textarea
-          id="address1"
-          value={address1}
-          onChange={handleAddress1Change}
-        />
-        {address1Error && <div className='error'>{address1Error}</div>}
-      </div>
-
-      <div>
-        <label htmlFor="address2">Address 2:</label>
-        <textarea
-          id="address2"
-          value={address2}
-          onChange={handleAddress2Change}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="city">City:</label>
-        <input
-          type="text"
-          id="city"
-          value={city}
-          onChange={handleCityChange}
-        />
-        {cityError && <div className='error'>{cityError}</div>}
-      </div>
-
-      <div>
-        <label htmlFor="state">State:</label>
-        <select id="state" value={state} onChange={handleStateChange}>
-          <option value="" disabled>Select State</option>
-          {statesList.map((stateCode) => (
-            <option key={stateCode} value={stateCode}>{stateCode}</option>
-          ))}
-        </select>
-        {stateError && <div className='error'>{stateError}</div>}
-      </div>
-
-      <div>
-        <label htmlFor="zipcode">Zipcode:</label>
-        <input
-          type="text"
-          id="zipcode"
-          value={zipcode}
-          onChange={handleZipcodeChange}
-        />
-        {zipcodeError && <div className='error'>{zipcodeError}</div>}
-      </div>
-
-      <div>
-        <button type="submit">Submit</button>
-      </div>
-    </form>
-  );
 };
 
 export default ClientProfileForm;
