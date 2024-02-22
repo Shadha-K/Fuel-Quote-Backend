@@ -1,0 +1,115 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #f8f8f8;
+    color: #333;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.banner-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    margin-top: -20px; 
+}
+
+.user-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 20px auto; 
+}
+
+.user-info {
+    text-align: center;
+}
+
+.user-full-name {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.user-username {
+    font-size: 18px;
+    color: #555;
+}
+
+.edit-profile-button {
+    background-color: #4c00b4;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.update-info-button{
+    background-color: #4c00b4;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 5px auto; 
+    width: 200px;
+}
+
+.fuel-quote-button{
+    background-color: #4c00b4;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px auto; 
+    width: 200px;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.user-information {
+    margin-top: 20px;
+    margin-left: 10px;
+    color: #555;
+}
+
+.fuel-request-message{
+    margin-top: 20px;
+    margin-left: 10px;
+    color: #555;
+}
+
+.order-history-button {
+    background-color: #4c00b4;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.divider-line {
+    height: 1px;
+    background-color: #ddd;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.attribute-name {
+    font-weight: bold;
+    margin-right: 8px; 
+}
+
+.user-info-line {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px; 
+}
