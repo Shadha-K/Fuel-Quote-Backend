@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import LoginSignup from './Components/LoginSignup/LoginSignup';
 import Registration from './Components/Registration';
-import Profile from './Components/Profile';
+import Profile from './Components/UserProfile';
 import FuelRequest from './Components/FuelRequest';
 
 function App() {
