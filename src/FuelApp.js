@@ -6,6 +6,7 @@ import LoginSignup from './Components/LoginSignup/LoginSignup';
 import Registration from './Components/Registration';
 import Profile from './Components/UserProfile';
 import FuelRequest from './Components/FuelRequest';
+import EditProfile from './Components/EditProfile/EditProfile';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/registration" component={Registration} />
         <Route path="/profile" component={Profile} />
         <Route path="/fuel-request" component={FuelRequest} />
+        <Route path = '/edit-profile' element = {EditProfile}/>
       </Switch>
     </Router>
   );

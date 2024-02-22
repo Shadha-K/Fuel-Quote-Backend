@@ -11,6 +11,7 @@ import Registration from './Components/Registration/Registration';
 import UserProfile from './Components/UserProfile/UserProfile';
 import UserFuelRequest from './Components/UserFuelRequest/UserFuelRequest'
 import FuelRequest from './Components/FuelRequest/script';
+import EditProfile from './Components/EditProfile/EditProfile';
 
 function Navigation() {
   return (
@@ -20,6 +21,7 @@ function Navigation() {
         <li><Link to="/registration">Registration</Link></li>
         <li><Link to="/profile">UserProfile</Link></li>
         <li><Link to="/userfuelrequest">UserFuelRequest</Link></li>
+        <li><Link to="/edit-profile">Edit Profile</Link></li>
       </ul>
     </nav>
   );
@@ -33,6 +35,7 @@ function App() {
         <Route path="/registration" element={<Registration />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/userfuelrequest" element={<UserFuelRequest />} />
+        <Route path = '/edit-profile' element = {<EditProfile/>}/>
       </Routes>
 
       <Navigation />
