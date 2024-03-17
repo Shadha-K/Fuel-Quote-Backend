@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+import axios from 'axios';
 import './LoginSignup.css';
 
 import user_icon from '../Assets/person.png';
-import email_icon from '../Assets/email.png';
 import password_icon from '../Assets/password.png';
 import checkmark_icon from '../Assets/checkmark.png';
 
@@ -15,6 +14,7 @@ const LoginSignup = () => {
   const [passwordError, setPasswordError] = useState('');
   const [usernameValid, setUsernameValid] = useState(false);
   const [passwordValid, setPasswordValid] = useState(false);
+  const [error, setError] = useState('');
 
   const handleUsernameChange = (e) => {
     const newUsername = e.target.value;
@@ -64,25 +64,42 @@ const LoginSignup = () => {
     let isValid = true;
   
     if (!username.trim()) {
+      setUsernameError('Username is required');
+      setUsernameValid(false);
       isValid = false;
-    } else if (username.length < 4 || username.length > 20){
-        isValid = false;
+    } else if (username.length < 4 || username.length > 20) {
+      setUsernameError('Username must be between 4 and 20 characters');
+      setUsernameValid(false);
+      isValid = false;
     } else if (!/^[a-zA-Z0-9_.-]+$/.test(username)) {
+      setUsernameError('Invalid characters. Use only letters, numbers, dots, dashes, or underscores.');
+      setUsernameValid(false);
       isValid = false;
+    } else {
+      setUsernameError('');
+      setUsernameValid(true);
     }
-
   
     if (!password.trim()) {
+      setPasswordError('Password is required');
+      setPasswordValid(false);
       isValid = false;
     } else if (password.length < 4 || password.length > 20) {
+      setPasswordError('Password must be between 4 and 20 characters');
+      setPasswordValid(false);
       isValid = false;
     } else if (!/(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]/.test(password)) {
+      setPasswordError('Password must contain at least one letter, one number, and one special character');
+      setPasswordValid(false);
       isValid = false;
+    } else {
+      setPasswordError('');
+      setPasswordValid(true);
     }
   
     return isValid;
-  };  
-
+  };
+  
   const handleSwitchAction = (newAction) => {
     setAction(newAction);
     setUsername(''); // Reset username
@@ -93,10 +110,24 @@ const LoginSignup = () => {
     setPasswordValid(false);
   };
 
-  const handleSubmit = () => {
-    if (handleValidation()) {
-      console.log('Valid input. Perform login/signup logic.');
+  const handleSubmit = async () => {
+    if (handleValidation() === true) {
+      try {
+        const response = await axios.post('http://localhost:3000/api/auth/login', { username, password }); // Make a POST request to login endpoint
+        console.log('Login successful:', response.data);
+        // Display redirecting message
+        setError('Redirecting...');
+        // Handle successful login (e.g., redirect to dashboard)
+        // For demonstration purposes, you can use window.location.href to redirect
+        // Replace '/dashboard' with the actual URL you want to redirect to
+      } catch (error) {
+        console.error('Login failed:', error.response.data);
+        // Handle login error (e.g., display error message)
+        setError('Invalid username or password');
+      }
     } else {
+      // Display invalid credentials message
+      setError('Invalid credentials');
       console.log('Invalid input. Please fix the errors.');
     }
   };
@@ -136,6 +167,7 @@ const LoginSignup = () => {
         <div className={action === 'Login' ? 'submit gray' : 'submit'} onClick={() => handleSwitchAction('Sign Up')}>Sign Up</div>
         <div className={action === 'Sign Up' ? 'submit gray' : 'submit'} onClick={() => handleSwitchAction('Login')}>Login</div>
       </div>
+      {error && <div className='error-message'>{error}</div>}
       <div className='submit' onClick={handleSubmit}>Submit</div>
     </div>
   );
