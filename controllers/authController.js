@@ -2,6 +2,7 @@
 
 // Import any necessary modules or models here
 // For example, you might import a User model to interact with the database
+const jwt = require('jsonwebtoken');
 
 // Hardcoded valid credentials for testing
 const validCredentials = [
@@ -21,9 +22,12 @@ const validCredentials = [
       const isValidUser = validCredentials.some(cred => cred.username === username && cred.password === password);
       
       if (isValidUser) {
-        // If authentication is successful, generate a JWT token and send it in the response
+        // If authentication is successful, generate a JWT token with the username as payload
         const token = generateToken(username);
         console.log('Login successful for user:', username);
+        // Set the token in the response header
+        res.header('Authorization', `Bearer ${token}`);
+        // Return the token in the response body
         return res.status(200).json({ token });
       } else {
         // If authentication fails, send a 401 Unauthorized response
@@ -34,7 +38,7 @@ const validCredentials = [
       console.error('Error logging in:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
-    }
+  }
 
     async function register(req, res) {
         // Extract username and password from the request body
@@ -67,9 +71,15 @@ const validCredentials = [
   
   // Function to generate a JWT token
   function generateToken(username) {
-      // Example logic to generate a JWT token (replace with your actual token generation logic)
-      // For demonstration purposes, we're just using a simple hardcoded token
-      return 'exampleToken';
+    // Example logic to generate a JWT token with username as payload
+    // You can use any secret key for signing the token
+    const secretKey = 'your_secret_key';
+    // Set token expiration time (optional)
+    const expiresIn = '1d'; // Token expires in 1 day
+    // Sign the token with the username as payload and secret key
+    const token = jwt.sign({ username }, secretKey, { expiresIn });
+    console.log("Token generated is ", token);
+    return token;
   }
   
   module.exports = {

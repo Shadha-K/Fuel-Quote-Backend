@@ -4,10 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors'); // Import the cors middleware
 require('dotenv').config(); // Load environment variables
 
-app.use(cors({
-  origin: 'http://localhost:3001',
-  preflightContinue: true
-}));
+app.use(cors());
 
 // Import route files
 const authRoutes = require('./routes/authRoutes');

@@ -1,7 +1,15 @@
 // fuelQuoteController.js
 
 // Example fuel quote data (replace with your actual data access logic)
-const fuelQuoteData = [];
+const fuelQuoteData = [
+  {
+    gallonsRequested: 50,
+    deliveryAddress: '123 Main St City, ST 12345',
+    deliveryDate: '3/18/2034',
+    pricePerGallon: 2.13,
+    totalAmountDue: 106.5
+  }
+];
 
 // Function to create a new fuel quote request
 async function createQuote(req, res) {

@@ -2,6 +2,7 @@
 
 // Example profile data (replace with your actual data access logic)
 const userProfileData = {
+    username: 'user_name123',
     fullName: 'John Doe',
     address1: '123 Main St',
     address2: '',
@@ -25,11 +26,12 @@ const userProfileData = {
   // Function to update the profile of the currently authenticated user
   async function updateProfile(req, res) {
     // Extract profile update data from the request body
-    const { fullName, address1, address2, city, state, zipcode } = req.body;
+    const { username, fullName, address1, address2, city, state, zipcode } = req.body;
   
     try {
       // Example logic to update user profile data (replace with your actual data access logic)
       // For demonstration purposes, we're just updating the hardcoded profile data
+      userProfileData.username = username;
       userProfileData.fullName = fullName;
       userProfileData.address1 = address1;
       userProfileData.address2 = address2;

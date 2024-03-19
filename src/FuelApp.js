@@ -16,7 +16,6 @@ function App() {
         <Route path="/registration" component={Registration} />
         <Route path="/profile" component={Profile} />
         <Route path="/fuel-request" component={FuelRequest} />
-        <Route path = '/edit-profile' element = {EditProfile}/>
       </Switch>
     </Router>
   );

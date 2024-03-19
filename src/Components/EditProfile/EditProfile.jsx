@@ -7,7 +7,7 @@ import city_icon from '../Assets/city.png'
 import state_icon from '../Assets/state.png'
 import location_icon from '../Assets/location3.png'
 
-const ClientProfileForm = () => {
+const EditProfileForm = () => {
   const [fullName, setFullName] = useState('');
   const [address1, setAddress1] = useState('');
   const [address2, setAddress2] = useState('');
@@ -212,77 +212,6 @@ const ClientProfileForm = () => {
       </div>
     </form>
   );
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="fullName">Client Full Name:</label>
-        <input
-          type="text"
-          id="fullName"
-          value={fullName}
-          onChange={handleFullNameChange}
-        />
-        {fullNameError && <div className='error'>{fullNameError}</div>}
-      </div>
-
-      <div>
-        <label htmlFor="address1">Address 1:</label>
-        <textarea
-          id="address1"
-          value={address1}
-          onChange={handleAddress1Change}
-        />
-        {address1Error && <div className='error'>{address1Error}</div>}
-      </div>
-
-      <div>
-        <label htmlFor="address2">Address 2:</label>
-        <textarea
-          id="address2"
-          value={address2}
-          onChange={handleAddress2Change}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="city">City:</label>
-        <input
-          type="text"
-          id="city"
-          value={city}
-          onChange={handleCityChange}
-        />
-        {cityError && <div className='error'>{cityError}</div>}
-      </div>
-
-      <div>
-        <label htmlFor="state">State:</label>
-        <select id="state" value={state} onChange={handleStateChange}>
-          <option value="" disabled>Select State</option>
-          {statesList.map((stateCode) => (
-            <option key={stateCode} value={stateCode}>{stateCode}</option>
-          ))}
-        </select>
-        {stateError && <div className='error'>{stateError}</div>}
-      </div>
-
-      <div>
-        <label htmlFor="zipcode">Zipcode:</label>
-        <input
-          type="text"
-          id="zipcode"
-          value={zipcode}
-          onChange={handleZipcodeChange}
-        />
-        {zipcodeError && <div className='error'>{zipcodeError}</div>}
-      </div>
-
-      <div>
-        <button type="submit">Submit</button>
-      </div>
-    </form>
-  );
 };
 
-export default ClientProfileForm;
+export default EditProfileForm;

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './LoginSignup.css';
-
+import { Link } from 'react-router-dom';
 import user_icon from '../Assets/person.png';
 import password_icon from '../Assets/password.png';
 import checkmark_icon from '../Assets/checkmark.png';
@@ -19,7 +18,7 @@ const LoginSignup = () => {
   const handleUsernameChange = (e) => {
     const newUsername = e.target.value;
     setUsername(newUsername);
-  
+
     if (!newUsername.trim()) {
       setUsernameError('Username is required');
       setUsernameValid(false);
@@ -36,33 +35,33 @@ const LoginSignup = () => {
       setUsernameError('');
       setUsernameValid(true);
     }
-  };     
+  };
 
   const handlePasswordChange = (e) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
 
-    if (!newPassword.trim()){
+    if (!newPassword.trim()) {
       setPasswordError('Password is required');
       setPasswordValid(false);
-    } else if (newPassword.length < 4){
+    } else if (newPassword.length < 4) {
       setPasswordError('Password must be greater than 4 characters');
       setPasswordValid(false);
-    } else if (newPassword.length > 20){
+    } else if (newPassword.length > 20) {
       setPasswordError('Password must be less than 20 characters');
       setPasswordValid(false);
-    } else if (!/(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]/.test(newPassword)){
+    } else if (!/(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]/.test(newPassword)) {
       setPasswordError('Password must contain at least one letter, number, and symbol');
       setPasswordValid(false);
     } else {
-      setPasswordError(''); 
+      setPasswordError('');
       setPasswordValid(true);
     }
   };
 
   const handleValidation = () => {
     let isValid = true;
-  
+
     if (!username.trim()) {
       setUsernameError('Username is required');
       setUsernameValid(false);
@@ -79,7 +78,7 @@ const LoginSignup = () => {
       setUsernameError('');
       setUsernameValid(true);
     }
-  
+
     if (!password.trim()) {
       setPasswordError('Password is required');
       setPasswordValid(false);
@@ -96,10 +95,10 @@ const LoginSignup = () => {
       setPasswordError('');
       setPasswordValid(true);
     }
-  
+
     return isValid;
   };
-  
+
   const handleSwitchAction = (newAction) => {
     setAction(newAction);
     setUsername(''); // Reset username
@@ -113,62 +112,70 @@ const LoginSignup = () => {
   const handleSubmit = async () => {
     if (handleValidation() === true) {
       try {
-        const response = await axios.post('http://localhost:3000/api/auth/login', { username, password }); // Make a POST request to login endpoint
+        const response = await axios.post('http://localhost:3000/api/auth/login', { username, password });
         console.log('Login successful:', response.data);
-        // Display redirecting message
+  
+        // Extract the token from the response
+        const token = response.data.token;
+        console.log("Login token is ", token);
+        // Store the token in local storage
+        localStorage.setItem('token', token);
+  
+        // Redirect to profile page
         setError('Redirecting...');
-        // Handle successful login (e.g., redirect to dashboard)
-        // For demonstration purposes, you can use window.location.href to redirect
-        // Replace '/dashboard' with the actual URL you want to redirect to
+        window.location.href = "/profile";
       } catch (error) {
         console.error('Login failed:', error.response.data);
-        // Handle login error (e.g., display error message)
         setError('Invalid username or password');
       }
     } else {
-      // Display invalid credentials message
       setError('Invalid credentials');
       console.log('Invalid input. Please fix the errors.');
     }
-  };
+  };  
 
   return (
-    <div className='container'>
-      <div className='header'>
-        <div className='text'>{action}</div>
-        <div className='underline'></div>
+    <div className='container sm:max-w-2xl mx-auto px-20 py-16'>
+      <div className='header flex flex-col items-center'>
+        <div className='text text-4xl font-bold text-indigo-800'>{action}</div>
+        <div className='underline w-20 h-1 bg-indigo-800 rounded-full'></div>
       </div>
-      <div className='inputs'>
-        <div className='input'>
-          <img src={user_icon} width={25} height={25} alt='' />
+      <div className='inputs mt-10'>
+        <div className='input flex items-center w-96 h-16 bg-gray-200 rounded-md'>
+          <img src={user_icon} width={25} height={25} alt='' className='mx-3' />
           <input
             type='username'
             placeholder='Username'
             value={username}
             onChange={handleUsernameChange}
+            className='w-72 bg-transparent focus:outline-none text-gray-700 text-lg'
           />
-          {usernameError && <div className='error'>{usernameError}</div>}
+          {usernameError && <div className='error text-red-500'>{usernameError}</div>}
           {usernameValid && <img src={checkmark_icon} width={25} height={25} alt='checkmark' />}
-          </div>
-        <div className='input'>
-          <img src={password_icon} width={25} height={25} alt='' />
+        </div>
+        <div className='input flex items-center w-96 h-16 bg-gray-200 rounded-md mt-4'>
+          <img src={password_icon} width={25} height={25} alt='' className='mx-3' />
           <input
             type='password'
             placeholder='Password'
             value={password}
             onChange={handlePasswordChange}
+            className='w-72 bg-transparent focus:outline-none text-gray-700 text-lg'
           />
-          {passwordError && <div className='error'>{passwordError}</div>}
+          {passwordError && <div className='error text-red-500'>{passwordError}</div>}
           {passwordValid && <img src={checkmark_icon} width={25} height={25} alt='checkmark' />}
         </div>
       </div>
-      {action === 'Sign Up' ? <div></div> : <div className='forgot-password'>Forgot Password? <span>Click Here</span></div>}
-      <div className='submit-container'>
-        <div className={action === 'Login' ? 'submit gray' : 'submit'} onClick={() => handleSwitchAction('Sign Up')}>Sign Up</div>
-        <div className={action === 'Sign Up' ? 'submit gray' : 'submit'} onClick={() => handleSwitchAction('Login')}>Login</div>
+      {action === 'Sign Up' ? <div></div> : <div className='forgot-password text-gray-700 text-lg mt-4'>Forgot Password? <span className='text-indigo-800 cursor-pointer'>Click Here</span></div>}
+      <div className='submit-container flex gap-8 mt-12'>
+        <div className={action === 'Login' ? 'submit bg-gray-400 text-gray-700' : 'submit bg-indigo-800 text-white'} onClick={() => handleSwitchAction('Sign Up')}>Sign Up</div>
+        <div className={action === 'Sign Up' ? 'submit bg-gray-400 text-gray-700' : 'submit bg-indigo-800 text-white'} onClick={() => handleSwitchAction('Login')}>Login</div>
       </div>
-      {error && <div className='error-message'>{error}</div>}
-      <div className='submit' onClick={handleSubmit}>Submit</div>
+      {error && <div className='error-message text-red-500 mt-4'>{error}</div>}
+      <div className='flex justify-between mt-4'>
+        <div className='submit bg-indigo-800 text-white w-48 h-16 flex justify-center items-center' onClick={handleSubmit}>Submit</div>
+        <Link to="/homepage" className='bg-gray-300 text-gray-700 px-6 py-3 flex justify-center items-center text-lg'>Return to Homepage</Link>
+      </div>
     </div>
   );
 };
