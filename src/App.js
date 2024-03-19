@@ -1,9 +1,6 @@
-// App.js
-
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import './Components/Navigation/Navigation'; // Import the navigation CSS file
+import './Components/Navigation/Navigation'; 
 import './Components/Navigation/Navigation.css';
 
 
@@ -18,12 +15,6 @@ function Navigation() {
   return (
     <nav>
       <ul>
-        
-        <li><Link to="/homepage">HomePage</Link></li>
-        <li><Link to="/login-signup">Login/Signup</Link></li>
-        <li><Link to="/registration">Registration</Link></li>
-        <li><Link to="/profile">UserProfile</Link></li>
-        <li><Link to="/userfuelrequest">UserFuelRequest</Link></li>
         
       </ul>
     </nav>
