@@ -1,6 +1,3 @@
-// profileController.js
-
-// Example profile data (replace with your actual data access logic)
 const userProfileData = {
     username: 'user_name123',
     fullName: 'John Doe',
@@ -11,11 +8,8 @@ const userProfileData = {
     zipcode: '12345'
   };
   
-  // Function to retrieve the profile of the currently authenticated user
   async function getProfile(req, res) {
     try {
-      // Example logic to retrieve user profile data (replace with your actual data access logic)
-      // For demonstration purposes, we're just returning the hardcoded profile data
       return res.status(200).json(userProfileData);
     } catch (error) {
       console.error('Error retrieving profile:', error);
@@ -23,14 +17,10 @@ const userProfileData = {
     }
   }
   
-  // Function to update the profile of the currently authenticated user
   async function updateProfile(req, res) {
-    // Extract profile update data from the request body
     const { username, fullName, address1, address2, city, state, zipcode } = req.body;
   
     try {
-      // Example logic to update user profile data (replace with your actual data access logic)
-      // For demonstration purposes, we're just updating the hardcoded profile data
       userProfileData.username = username;
       userProfileData.fullName = fullName;
       userProfileData.address1 = address1;
@@ -39,7 +29,6 @@ const userProfileData = {
       userProfileData.state = state;
       userProfileData.zipcode = zipcode;
   
-      // Send a success response with the updated profile data
       return res.status(200).json(userProfileData);
     } catch (error) {
       console.error('Error updating profile:', error);

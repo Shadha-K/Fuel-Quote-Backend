@@ -1,27 +1,19 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const cors = require('cors'); // Import the cors middleware
-require('dotenv').config(); // Load environment variables
+const cors = require('cors'); 
+require('dotenv').config(); 
 
 app.use(cors());
 
-// Import route files
-const authRoutes = require('./routes/authRoutes');
-const profileRoutes = require('./routes/profileRoutes');
-const fuelQuoteRoutes = require('./routes/fuelQuoteRoutes');
+const userRoutes = require('./routes/userRoutes');
 
-// Middleware
-app.use(bodyParser.json()); // Parse JSON request bodies
-// Add any additional middleware here
+app.use(bodyParser.json()); 
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/profile', profileRoutes);
-app.use('/api/fuel-quote', fuelQuoteRoutes);
-// Add any additional routes here
+app.use('/api/auth', userRoutes);
+app.use('/api/profile', userRoutes);
+app.use('/api/fuel-quote', userRoutes);
 
-// Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

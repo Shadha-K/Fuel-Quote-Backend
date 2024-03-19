@@ -1,3 +1,4 @@
+/*
 // fuelQuoteRoutes.js
 
 const express = require('express');
@@ -21,3 +22,4 @@ router.post('/fuel-quote', authMiddleware.authenticate, validationMiddleware.val
 router.get('/fuel-quote/history', authMiddleware.authenticate, fuelQuoteController.getQuoteHistory);
 
 module.exports = router;
+*/

@@ -3,6 +3,16 @@ import placeholder_icon from '../Assets/Portrait_Placeholder.png';
 import city_banner from '../Assets/citybanner2.jpg';
 import axios from 'axios';
 
+axios.interceptors.request.use(config => {
+  // Retrieve JWT token from local storage
+  const token = localStorage.getItem('token');
+  // If token is present, add Authorization header
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 const UserProfile = () => {
   const [profilePicture, setProfilePicture] = useState(placeholder_icon);
   const [fullName, setFullName] = useState('');
@@ -13,6 +23,7 @@ const UserProfile = () => {
   const [zipcode, setZipcode] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [quoteHistory, setQuoteHistory] = useState([]);
+  const [username, setUsername] = useState('');
 
   useEffect(() => {
     // Fetch user profile data from the backend when the component mounts
@@ -25,38 +36,36 @@ const UserProfile = () => {
     try {
       // Retrieve JWT token from local storage
       const token = localStorage.getItem('token');
+      // Split the token into its parts
+      const tokenParts = token.split('.');
+      // Decode the payload (the second part)
+      const payload = JSON.parse(atob(tokenParts[1]));
+      // Extract information from the payload
+      setUsername(payload.username);
       console.log(token);
-      const response = await axios.get('http://localhost:3000/api/profile', {
+      const response = await axios.get('http://localhost:3000/api/profile/profile', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ` + localStorage.getItem('token')
         }
       });
-      console.log(token);
-      console.log("Token shown, now updating profile data");
       const profileData = response.data;
-      console.log("Updated profileData");
       // Update state variables with profile data
       setFullName(profileData.fullName);
-      console.log("Setting full name");
       setAddress1(profileData.address1);
-      console.log("Setting address");
       setAddress2(profileData.address2);
       setCity(profileData.city);
       setState(profileData.state);
       setZipcode(profileData.zipcode);
     } catch (error) {
       console.error('Error fetching user profile:', error);
-      const token = localStorage.getItem('token');
-      console.log(token);
     }
   };
-
+  
   const fetchQuoteHistory = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/api/fuel-quote/history', {
+      const response = await axios.get('http://localhost:3000/api/fuel-quote/fuel-quote/history', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ` + localStorage.getItem('token')
         }
       });
       setQuoteHistory(response.data);
@@ -135,7 +144,7 @@ const UserProfile = () => {
             fullName
           )}
         </div>
-        <div className="text-gray-500">@johndoe</div>
+        <div className="text-gray-500">{username}</div> {/* Display username here */}
         <div className="text-gray-600 mt-4">
           <div className="flex items-center ml-4">
             <span className="font-semibold mr-2">Address 1:</span>
@@ -219,14 +228,14 @@ const UserProfile = () => {
         </button>
         <div className="text-xl font-semibold mt-6">Fuel Quote History</div>
         {quoteHistory.map((quote, index) => (
-        <div key={index} className="bg-white p-6 mt-4 rounded-lg shadow-md max-w-3xl">
-        <div>Gallons requested: {quote.gallonsRequested}</div>
-        <div>Delivery address: {quote.deliveryAddress}</div>
-        <div>Delivery date: {quote.deliveryDate}</div>
-        <div>Suggested price/gallon: ${quote.pricePerGallon}</div>
-        <div>Total amount due: ${quote.totalAmountDue}</div>
-  </div>
-))}
+          <div key={index} className="bg-white p-6 mt-4 rounded-lg shadow-md max-w-3xl">
+            <div>Gallons requested: {quote.gallonsRequested}</div>
+            <div>Delivery address: {quote.deliveryAddress}</div>
+            <div>Delivery date: {quote.deliveryDate}</div>
+            <div>Suggested price/gallon: ${quote.pricePerGallon}</div>
+            <div>Total amount due: ${quote.totalAmountDue}</div>
+          </div>
+        ))}
         <button className="bg-indigo-800 text-white px-6 py-3 mt-4 rounded-lg inline-block" onClick={redirectToFuelQuoteForm}>Request Fuel</button>
       </div>
     </div>

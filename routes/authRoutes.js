@@ -1,3 +1,4 @@
+/*
 const express = require('express');
 const router = express.Router();
 
@@ -11,3 +12,4 @@ router.post('/login', validationMiddleware.validateLogin, authController.login);
 router.post('/register', validationMiddleware.validateRegistration, authController.register);
 
 module.exports = router;
+*/

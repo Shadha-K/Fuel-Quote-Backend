@@ -1,3 +1,4 @@
+/*
 // profileRoutes.js
 
 const express = require('express');
@@ -13,3 +14,4 @@ router.get('/', authMiddleware.authenticate, profileController.getProfile);
 router.put('/', authMiddleware.authenticate, validationMiddleware.validateProfileUpdate, profileController.updateProfile);
 
 module.exports = router;
+*/
