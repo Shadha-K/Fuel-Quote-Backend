@@ -227,7 +227,12 @@ const UserProfile = () => {
           Logout
         </button>
         <div className="text-xl font-semibold mt-6">Fuel Quote History</div>
-        {quoteHistory.map((quote, index) => (
+        {quoteHistory.length === 0 ? (
+        <p className="text-indigo-600 mt-2">
+          You have no past fuel quotes. Click the button below to order now.
+        </p>
+      ) : (
+        quoteHistory.map((quote, index) => (
           <div key={index} className="bg-white p-6 mt-4 rounded-lg shadow-md max-w-3xl">
             <div>Gallons requested: {quote.gallonsRequested}</div>
             <div>Delivery address: {quote.deliveryAddress}</div>
@@ -235,7 +240,8 @@ const UserProfile = () => {
             <div>Suggested price/gallon: ${quote.pricePerGallon}</div>
             <div>Total amount due: ${quote.totalAmountDue}</div>
           </div>
-        ))}
+        ))
+      )}
         <button className="bg-indigo-800 text-white px-6 py-3 mt-4 rounded-lg inline-block" onClick={redirectToFuelQuoteForm}>Request Fuel</button>
       </div>
     </div>

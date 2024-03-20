@@ -1,22 +1,43 @@
 const jwt = require('jsonwebtoken');
 
-const userProfileData = {
-    username: 'user_name123',
-    fullName: 'John Doe',
-    address1: '123 Main St',
-    address2: '',
-    city: 'City',
-    state: 'ST',
-    zipcode: '12345'
+const userProfiles = {
+    user_name123: {
+        username: 'user_name123',
+        fullName: 'John Doe',
+        address1: '123 Main St',
+        address2: '',
+        city: 'City',
+        state: 'ST',
+        zipcode: '12345'
+    },
+    user2: {
+        username: 'user2',
+        fullName: 'Jane Smith',
+        address1: '456 Elm St',
+        address2: '',
+        city: 'Town',
+        state: 'ST',
+        zipcode: '67890'
+    }
 };
 
 const fuelQuoteData = [
     {
+        username: 'user_name123',
         gallonsRequested: 50,
         deliveryAddress: '123 Main St City, ST 12345',
         deliveryDate: '3/18/2034',
         pricePerGallon: 2.13,
         totalAmountDue: 106.5
+
+    },
+    {
+        username: 'user_name123',
+        gallonsRequested: 45,
+        deliveryAddress: '123 Main St City, ST 12345',
+        deliveryDate: '3/24/18',
+        pricePerGallon: 2.07,
+        totalAmountDue: 100.8
     }
 ];
 
@@ -27,7 +48,14 @@ const validCredentials = [
 
 async function getProfile(req, res) {
     try {
-        return res.status(200).json(userProfileData);
+        // Retrieve the username from the request or token
+        const { username } = req.user;
+        // Fetch the user profile based on the username
+        const userProfile = userProfiles[username];
+        if (!userProfile) {
+            return res.status(404).json({ error: 'User profile not found' });
+        }
+        return res.status(200).json(userProfile);
     } catch (error) {
         console.error('Error retrieving profile:', error);
         return res.status(500).json({ error: 'Internal server error' });
@@ -70,8 +98,11 @@ async function createQuote(req, res) {
 }
 
 async function getQuoteHistory(req, res) {
+    const loggedInUsername = req.user.username; // Assuming req.user contains the logged-in user's information
+
     try {
-        return res.status(200).json(fuelQuoteData);
+        const userFuelQuotes = fuelQuoteData.filter(quote => quote.username === loggedInUsername);
+        return res.status(200).json(userFuelQuotes);
     } catch (error) {
         console.error('Error retrieving fuel quote history:', error);
         return res.status(500).json({ error: 'Internal server error' });
