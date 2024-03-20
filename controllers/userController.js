@@ -42,15 +42,13 @@ const fuelQuoteData = [
 ];
 
 const validCredentials = [
-    { username: "user_name123", password: "Password123!" },
-    { username: 'user2', password: 'password2@' },
+    { username: "user_name123", password: "Password123!", profileComplete: true },
+    { username: 'user2', password: 'password2@', profileComplete: true },
 ];
 
 async function getProfile(req, res) {
     try {
-        // Retrieve the username from the request or token
         const { username } = req.user;
-        // Fetch the user profile based on the username
         const userProfile = userProfiles[username];
         if (!userProfile) {
             return res.status(404).json({ error: 'User profile not found' });
@@ -81,13 +79,18 @@ async function updateProfile(req, res) {
     }
 }
 
+
 async function createQuote(req, res) {
-    const { gallonsRequested, deliveryDate } = req.body;
+    const { username, gallonsRequested, deliveryAddress, deliveryDate, pricePerGallon, totalAmountDue } = req.body;
 
     try {
         const newQuote = {
+            username,
             gallonsRequested,
             deliveryAddress,
+            deliveryDate,
+            pricePerGallon,
+            totalAmountDue
         };
         fuelQuoteData.push(newQuote);
         return res.status(201).json(newQuote);
@@ -98,34 +101,13 @@ async function createQuote(req, res) {
 }
 
 async function getQuoteHistory(req, res) {
-    const loggedInUsername = req.user.username; // Assuming req.user contains the logged-in user's information
+    const loggedInUsername = req.user.username; 
 
     try {
         const userFuelQuotes = fuelQuoteData.filter(quote => quote.username === loggedInUsername);
         return res.status(200).json(userFuelQuotes);
     } catch (error) {
         console.error('Error retrieving fuel quote history:', error);
-        return res.status(500).json({ error: 'Internal server error' });
-    }
-}
-
-async function login(req, res) {
-    const { username, password } = req.body;
-
-    try {
-        const isValidUser = validCredentials.some(cred => cred.username === username && cred.password === password);
-
-        if (isValidUser) {
-            const token = generateToken(username);
-            console.log('Login successful for user:', username);
-            res.header('Authorization', `Bearer ${token}`);
-            return res.status(200).json({ token });
-        } else {
-            console.log('Invalid credentials for user:', username);
-            return res.status(401).json({ error: 'Invalid username or password' });
-        }
-    } catch (error) {
-        console.error('Error logging in:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
@@ -138,14 +120,66 @@ async function register(req, res) {
 
         if (isUsernameTaken) {
             console.log('Username already taken:', username);
-            return res.status(409).json({ error: 'Username already taken' });
+            return res.status(409).json({ error: 'Username already taken' }); 
         } else {
-            validCredentials.push({ username, password });
+            validCredentials.push({ username, password, profileComplete: false }); // Include profileComplete field
             console.log('User registered successfully:', username);
             return res.status(201).json({ message: 'User registered successfully' });
         }
     } catch (error) {
         console.error('Error registering user:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+async function login(req, res) {
+    const { username, password } = req.body;
+
+    try {
+        const user = validCredentials.find(cred => cred.username === username && cred.password === password);
+        if (user) {
+            const token = generateToken(username);
+            console.log('Login successful for user:', username);
+            if (!user.profileComplete) {
+                return res.status(200).json({ token, redirectTo: '/registration' }); // Redirect to profile completion form
+            } else {
+                return res.status(200).json({ token, redirectTo: '/profile' }); // Redirect to profile page
+            }
+        } else {
+            console.log('Invalid credentials for user:', username);
+            return res.status(401).json({ error: 'Invalid username or password' });
+        }
+    } catch (error) {
+        console.error('Error logging in:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+async function completeProfile(req, res) {
+    const { username, fullName, address1, address2, city, state, zipcode } = req.body;
+    const userAddress2 = address2 || ''; 
+
+    try {
+        const user = validCredentials.find(cred => cred.username === username);
+        if (user) {
+            user.profileComplete = true; 
+            userProfiles[username] = {
+                username,
+                fullName,
+                address1,
+                address2,
+                city,
+                state,
+                zipcode
+            };
+            console.log('Profile completed and registered successfully:', username);
+            return res.status(201).json({ message: 'Profile completed and registered successfully' });
+        } else {
+            console.error('User not found:', username);
+            return res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error completing profile:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
@@ -160,6 +194,7 @@ function generateToken(username) {
 module.exports = {
     getProfile,
     updateProfile,
+    completeProfile,
     createQuote,
     getQuoteHistory,
     login,

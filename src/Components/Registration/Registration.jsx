@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import user_icon from '../Assets/person.png'
-import house_icon from '../Assets/house4.webp'
-import city_icon from '../Assets/city.png'
-import state_icon from '../Assets/state.png'
-import location_icon from '../Assets/location3.png'
+import React, { useState, useEffect } from 'react';
+import user_icon from '../Assets/person.png';
+import house_icon from '../Assets/house4.webp';
+import city_icon from '../Assets/city.png';
+import state_icon from '../Assets/state.png';
+import location_icon from '../Assets/location3.png';
+import axios from 'axios';
 
 const ClientProfileForm = () => {
   const [fullName, setFullName] = useState('');
@@ -12,6 +13,8 @@ const ClientProfileForm = () => {
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [zipcode, setZipcode] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const [fullNameError, setFullNameError] = useState('');
   const [address1Error, setAddress1Error] = useState('');
@@ -27,18 +30,25 @@ const ClientProfileForm = () => {
     'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
   ];
 
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('signupUsername');
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+    const storedPassword = localStorage.getItem('signupPassword');
+    if (storedUsername){
+      setPassword(storedPassword);
+    }
+  }, []);
+
   const handleFullNameChange = (e) => {
     const newName = e.target.value;
     setFullName(newName);
-
-    // Validation logic...
   };
 
   const handleAddress1Change = (e) => {
     const newAddress1 = e.target.value;
     setAddress1(newAddress1);
-
-    // Validation logic...
   };
 
   const handleAddress2Change = (e) => {
@@ -48,27 +58,65 @@ const ClientProfileForm = () => {
   const handleCityChange = (e) => {
     const newCity = e.target.value;
     setCity(newCity);
-
-    // Validation logic...
   };
 
   const handleStateChange = (e) => {
     setState(e.target.value);
-
-    // Validation logic...
   };
 
   const handleZipcodeChange = (e) => {
     const newZipcode = e.target.value;
     setZipcode(newZipcode);
-
-    // Validation logic...
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Form submission logic...
+    if (fullName.trim() === '') {
+      setFullNameError('Full Name is required');
+      return;
+    }
+
+    if (address1.trim() === '') {
+      setAddress1Error('Address 1 is required');
+      return;
+    }
+
+    if (city.trim() === '') {
+      setCityError('City is required');
+      return;
+    }
+
+    if (state === '') {
+      setStateError('State is required');
+      return;
+    }
+
+    if (zipcode.trim() === '') {
+      setZipcodeError('Zipcode is required');
+      return;
+    }
+
+    try {
+      const userProfileData = {
+        username,
+        fullName,
+        address1,
+        address2: address2 || '', 
+        city,
+        state,
+        zipcode
+      };
+      const response = await axios.post('http://localhost:3000/api/profile/complete-profile', userProfileData);
+      console.log('Profile updated successfully:', response.data);
+      window.location.href = '/profile';
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
+  const handleCancel = () => {
+    window.location.href = '/login-signup';
   };
 
   return (
@@ -82,6 +130,19 @@ const ClientProfileForm = () => {
         <div className="input flex items-center w-96 h-16 bg-gray-200 rounded-md">
           <img src={user_icon} width={25} height={25} alt='' className='mx-3' />
           <input
+            type="text"
+            id="username"
+            placeholder="Username"
+            value={username}
+            onChange={() => {}}
+            readOnly
+            className="w-72 bg-transparent focus:outline-none text-gray-700 text-lg"
+          />
+        </div>
+
+        <div className="input flex items-center w-96 h-16 bg-gray-200 rounded-md mt-4">
+          <img src={user_icon} width={25} height={25} alt='' className='mx-3' />
+          <input
             type="fullname"
             id="fullName"
             placeholder="Full Name"
@@ -92,8 +153,6 @@ const ClientProfileForm = () => {
           {fullNameError && <div className='error text-red-500'>{fullNameError}</div>}
         </div>
 
-        {/* Address input fields */}
-        {/* House icon */}
         <div className="input flex items-center w-96 h-16 bg-gray-200 rounded-md mt-4">
           <img src={house_icon} width={25} height={25} alt='' className='mx-3' />
           <input
@@ -106,7 +165,6 @@ const ClientProfileForm = () => {
           {address1Error && <div className='error text-red-500'>{address1Error}</div>}
         </div>
         
-        {/* House icon */}
         <div className="input flex items-center w-96 h-16 bg-gray-200 rounded-md mt-4">
           <img src={house_icon} width={25} height={25} alt='' className='mx-3' />
           <input
@@ -118,8 +176,6 @@ const ClientProfileForm = () => {
           />
         </div>
         
-        {/* City input field */}
-        {/* City icon */}
         <div className="input flex items-center w-96 h-16 bg-gray-200 rounded-md mt-4">
           <img src={city_icon} width={25} height={25} alt='' className='mx-3' />
           <input
@@ -133,8 +189,6 @@ const ClientProfileForm = () => {
           {cityError && <div className='error text-red-500'>{cityError}</div>}
         </div>
 
-        {/* State input field */}
-        {/* State icon */}
         <div className="input flex items-center w-96 h-16 bg-gray-200 rounded-md mt-4">
           <img src={state_icon} width={25} height={25} alt='' className='mx-3' />
           <select
@@ -151,8 +205,6 @@ const ClientProfileForm = () => {
           {stateError && <div className='error text-red-500'>{stateError}</div>}
         </div>
 
-        {/* Zipcode input field */}
-        {/* Location icon */}
         <div className="input flex items-center w-96 h-16 bg-gray-200 rounded-md mt-4">
           <img src={location_icon} width={25} height={25} alt='' className='mx-3' />
           <input
@@ -167,13 +219,12 @@ const ClientProfileForm = () => {
         </div>
       </div>
 
-      <p className="redirect-text">
-        You will be redirected to the login page after registering.
-      </p>
-
       <div className="submit-container">
         <button type="submit" className="submit-button bg-indigo-800 text-white w-48 h-16 flex justify-center items-center" onClick={handleSubmit}>
           Submit
+        </button>
+        <button type="button" className="cancel-button bg-gray-400 text-gray-700 w-48 h-16 flex justify-center items-center" onClick={handleCancel}>
+          Cancel
         </button>
       </div>
     </form>

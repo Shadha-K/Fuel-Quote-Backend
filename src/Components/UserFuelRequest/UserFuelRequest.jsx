@@ -1,9 +1,31 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const FuelRequest = () => {
   const [gallonsRequested, setGallonsRequested] = useState(1);
   const [dateRequested, setDateRequested] = useState('2024-01-01');
   const [totalPrice, setTotalPrice] = useState(0.5);
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/profile/profile');
+
+      const userProfile = response.data;
+      const { address1, address2, city, state, zipcode, username } = userProfile;
+      const formattedAddress = `${address1}, ${address2 ? address2 + ', ' : ''}${city}, ${state} ${zipcode}`;
+
+      setDeliveryAddress(formattedAddress);
+      setUsername(username);
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
 
   useEffect(() => {
     updateTotalPrice();
@@ -14,15 +36,35 @@ const FuelRequest = () => {
     setTotalPrice(totalPriceValue.toFixed(2));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    window.location.href = "/profile";
-    // Add your form submission logic here
+    try {
+      const token = localStorage.getItem('token'); 
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
+      const newQuoteData = {
+        username,
+        gallonsRequested,
+        deliveryAddress,
+        deliveryDate: dateRequested,
+        pricePerGallon: 0.50, 
+        totalAmountDue: totalPrice
+      };
+      const response = await axios.post('http://localhost:3000/api/fuel-quote/fuel-quote', newQuoteData, config);
+      console.log('Quote created successfully:', response.data);
+      window.location.href = '/profile';
+    } catch (error) {
+      console.error('Error creating quote:', error);
+    }
   };
+  
 
   const handleCancel = () => {
-    // Add your cancel logic here
-    window.location.href = "/profile";
+    window.location.href = '/profile';
   };
 
   return (
@@ -56,6 +98,17 @@ const FuelRequest = () => {
               onChange={(e) => setDateRequested(e.target.value)}
               min="2024-01-01"
               required
+              className="w-full bg-gray-200 px-3 py-1 rounded"
+            />
+          </div>
+          <div className="input flex items-center mb-4">
+            <label htmlFor="deliveryAddress" className="mr-2">Delivery Address:</label>
+            <input
+              type="text"
+              id="deliveryAddress"
+              name="deliveryAddress"
+              value={deliveryAddress}
+              readOnly
               className="w-full bg-gray-200 px-3 py-1 rounded"
             />
           </div>

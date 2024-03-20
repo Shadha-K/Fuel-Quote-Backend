@@ -4,9 +4,7 @@ import city_banner from '../Assets/citybanner2.jpg';
 import axios from 'axios';
 
 axios.interceptors.request.use(config => {
-  // Retrieve JWT token from local storage
   const token = localStorage.getItem('token');
-  // If token is present, add Authorization header
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -26,21 +24,15 @@ const UserProfile = () => {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    // Fetch user profile data from the backend when the component mounts
     fetchUserProfile();
-    // Fetch fuel quote history data from the backend when the component mounts
     fetchQuoteHistory();
   }, []);
 
   const fetchUserProfile = async () => {
     try {
-      // Retrieve JWT token from local storage
       const token = localStorage.getItem('token');
-      // Split the token into its parts
       const tokenParts = token.split('.');
-      // Decode the payload (the second part)
       const payload = JSON.parse(atob(tokenParts[1]));
-      // Extract information from the payload
       setUsername(payload.username);
       console.log(token);
       const response = await axios.get('http://localhost:3000/api/profile/profile', {
@@ -49,7 +41,6 @@ const UserProfile = () => {
         }
       });
       const profileData = response.data;
-      // Update state variables with profile data
       setFullName(profileData.fullName);
       setAddress1(profileData.address1);
       setAddress2(profileData.address2);
@@ -75,7 +66,7 @@ const UserProfile = () => {
   };
 
   useEffect(() => {
-    // Logic for handling recent orders
+
   }, []);
 
   const redirectToFuelQuoteForm = () => {
@@ -94,20 +85,17 @@ const UserProfile = () => {
   };
 
   const handleEditProfile = () => {
-    setIsEditing(!isEditing); // Toggle editing mode
+    setIsEditing(!isEditing); 
   };
 
   const handleSaveProfile = () => {
     setIsEditing(false);
-    // Save profile changes logic can be added here
   };
 
   const handleCancelEdit = () => {
-    // Reset profile fields to their original values
     setIsEditing(false);
   };
 
-  // List of 50 states
   const states = [
     'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA',
     'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK',
@@ -116,7 +104,6 @@ const UserProfile = () => {
 
   const handleLogout = () => {
     window.location.href = "/homepage";
-    // Handle logout logic here
     console.log("Logged out");
   };
 
@@ -144,7 +131,7 @@ const UserProfile = () => {
             fullName
           )}
         </div>
-        <div className="text-gray-500">{username}</div> {/* Display username here */}
+        <div className="text-gray-500">{username}</div> 
         <div className="text-gray-600 mt-4">
           <div className="flex items-center ml-4">
             <span className="font-semibold mr-2">Address 1:</span>

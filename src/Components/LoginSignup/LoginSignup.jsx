@@ -101,10 +101,10 @@ const LoginSignup = () => {
 
   const handleSwitchAction = (newAction) => {
     setAction(newAction);
-    setUsername(''); // Reset username
-    setPassword(''); // Reset password
-    setUsernameError(''); // Reset username error
-    setPasswordError(''); // Reset password error
+    setUsername(''); 
+    setPassword(''); 
+    setUsernameError(''); 
+    setPasswordError(''); 
     setUsernameValid(false);
     setPasswordValid(false);
   };
@@ -112,18 +112,17 @@ const LoginSignup = () => {
   const handleSubmit = async () => {
     if (handleValidation() === true) {
       try {
-        const response = await axios.post('http://localhost:3000/api/auth/login', { username, password });
-        console.log('Login successful:', response.data);
+        if (action === 'Login') {
+          const response = await axios.post('http://localhost:3000/api/auth/login', { username, password });
+          console.log('Login successful:', response.data);
+          const token = response.data.token;
+          localStorage.setItem('token', token);
   
-        // Extract the token from the response
-        const token = response.data.token;
-        console.log("Login token is ", token);
-        // Store the token in local storage
-        localStorage.setItem('token', token);
-  
-        // Redirect to profile page
-        setError('Redirecting...');
-        window.location.href = "/profile";
+          const redirectTo = response.data.redirectTo;
+          window.location.href = redirectTo; 
+        } else {
+          await handleSubmitSignup();
+        }
       } catch (error) {
         console.error('Login failed:', error.response.data);
         setError('Invalid username or password');
@@ -132,7 +131,22 @@ const LoginSignup = () => {
       setError('Invalid credentials');
       console.log('Invalid input. Please fix the errors.');
     }
-  };  
+  };
+
+  const handleSubmitSignup = async () => {
+    if (handleValidation() === true) {
+      try {
+        const response = await axios.post('http://localhost:3000/api/auth/register', { username, password });
+        console.log('Signup successful:', response.data);
+        localStorage.setItem('signupUsername', username);
+        localStorage.setItem('signupPassword', password);
+        setError('Signup successful! Please log in.'); 
+      } catch (error) {
+        console.error('Signup failed:', error.response.data);
+        setError('Username is taken.');
+      }
+    }
+  };
 
   return (
     <div className='container sm:max-w-2xl mx-auto px-20 py-16'>

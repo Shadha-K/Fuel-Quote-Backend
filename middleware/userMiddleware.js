@@ -57,10 +57,21 @@ function authenticate(req, res, next) {
   });
 }
 
+function validateCompleteProfile(req, res, next) {
+  const { username, fullName, address1, city, state, zipcode } = req.body;
+
+  if (!username || !fullName || !address1 || !city || !state || !zipcode) {
+    return res.status(400).json({ error: 'Username, password, full name, address, city, state, and zipcode are required' });
+  }
+
+  next();
+}
+
 module.exports = {
   validateLogin,
   validateRegistration,
   validateProfileUpdate,
   validateFuelQuote,
+  validateCompleteProfile,
   authenticate
 };
