@@ -18,6 +18,7 @@ const ClientProfileForm = () => {
 
   const [fullNameError, setFullNameError] = useState('');
   const [address1Error, setAddress1Error] = useState('');
+  const [address2Error, setAddress2Error] = useState('');
   const [cityError, setCityError] = useState('');
   const [stateError, setStateError] = useState('');
   const [zipcodeError, setZipcodeError] = useState('');
@@ -44,20 +45,51 @@ const ClientProfileForm = () => {
   const handleFullNameChange = (e) => {
     const newName = e.target.value;
     setFullName(newName);
+  
+    if (newName.trim() === '') {
+      setFullNameError('Full Name is required');
+    } else if (newName.length > 50) {
+      setFullNameError('Full name must be 50 characters or less');
+    } else {
+      setFullNameError('');
+    }
+  };
+
+  const handleAddress2Change = (e) => {
+    const newAddress2 = e.target.value;
+    setAddress2(newAddress2);
+  
+    if (newAddress2.length > 100){
+      setAddress2Error('Address 2 must be 100 characters or less');
+    } else{
+      setAddress2Error('');
+    }
   };
 
   const handleAddress1Change = (e) => {
     const newAddress1 = e.target.value;
     setAddress1(newAddress1);
-  };
 
-  const handleAddress2Change = (e) => {
-    setAddress2(e.target.value);
+    if (newAddress1.trim() === '') {
+      setAddress1Error('Address 1 is required');
+    } else if (newAddress1.length > 100) {
+      setAddress1Error('Address 1 must be 100 characters or less');
+    } else {
+      setAddress1Error('');
+    }
   };
 
   const handleCityChange = (e) => {
     const newCity = e.target.value;
     setCity(newCity);
+  
+    if (newCity.trim() === '') {
+      setCityError('City is required');
+    } else if (newCity.length > 100) {
+      setCityError('City must be 100 characters or less');
+    } else {
+      setCityError('');
+    }
   };
 
   const handleStateChange = (e) => {
@@ -67,6 +99,16 @@ const ClientProfileForm = () => {
   const handleZipcodeChange = (e) => {
     const newZipcode = e.target.value;
     setZipcode(newZipcode);
+  
+    if (newZipcode.trim() === '') {
+      setZipcodeError('Zipcode is required');
+    } else if (newZipcode.length < 5 || newZipcode.length > 9) {
+      setZipcodeError('Zipcode must be between 5 and 9 digits long');
+    } else if (!/^\d+$/.test(newZipcode)) {
+      setZipcodeError('Zipcode must be digits only');
+    } else {
+      setZipcodeError('');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -76,14 +118,31 @@ const ClientProfileForm = () => {
       setFullNameError('Full Name is required');
       return;
     }
+    if (fullName.length > 50){
+      setFullNameError('Full name must be 50 characters or less')
+      return;
+    }
 
     if (address1.trim() === '') {
       setAddress1Error('Address 1 is required');
       return;
     }
+    if (address1.length > 100){
+      setAddress1Error('Address 1 must be 100 characters or less')
+      return;
+    }
+
+    if (address2.length > 100){
+      setAddress2Error('Address 2 must be 100 characters or less')
+      return;
+    }
 
     if (city.trim() === '') {
       setCityError('City is required');
+      return;
+    }
+    if (city.length > 100){
+      setCityError('City must be 100 characters or less')
       return;
     }
 
@@ -94,6 +153,14 @@ const ClientProfileForm = () => {
 
     if (zipcode.trim() === '') {
       setZipcodeError('Zipcode is required');
+      return;
+    }
+    if (zipcode.length < 5 || zipcode.length > 9) {
+      setZipcodeError(`Zipcode must be between 5 and 9 digits long`);
+      return;
+    }
+    if (!/^\d+$/.test(zipcode)) {
+      setZipcodeError(`Zipcode must be digits only`);
       return;
     }
 
@@ -174,6 +241,7 @@ const ClientProfileForm = () => {
             onChange={handleAddress2Change}
             className="w-72 bg-transparent focus:outline-none text-gray-700 text-lg"
           />
+          {address2Error && <div className='error text-red-500'>{address2Error}</div>}
         </div>
         
         <div className="input flex items-center w-96 h-16 bg-gray-200 rounded-md mt-4">

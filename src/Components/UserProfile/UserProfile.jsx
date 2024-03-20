@@ -23,6 +23,12 @@ const UserProfile = () => {
   const [quoteHistory, setQuoteHistory] = useState([]);
   const [username, setUsername] = useState('');
 
+  const [fullNameError, setFullNameError] = useState('');
+  const [address1Error, setAddress1Error] = useState('');
+  const [address2Error, setAddress2Error] = useState('');
+  const [cityError, setCityError] = useState('');
+  const [zipcodeError, setZipcodeError] = useState('');
+
   useEffect(() => {
     fetchUserProfile();
     fetchQuoteHistory();
@@ -88,8 +94,100 @@ const UserProfile = () => {
     setIsEditing(!isEditing); 
   };
 
-  const handleSaveProfile = () => {
-    setIsEditing(false);
+  const handleFullNameChange = (e) => {
+    const newName = e.target.value;
+    setFullName(newName);
+  
+    if (newName.trim() === '') {
+      setFullNameError('Full Name is required');
+    } else if (newName.length > 50) {
+      setFullNameError('Full name must be 50 characters or less');
+    } else {
+      setFullNameError('');
+    }
+  };
+
+  const handleAddress2Change = (e) => {
+    const newAddress2 = e.target.value;
+    setAddress2(newAddress2);
+  
+    if (newAddress2.length > 100){
+      setAddress2Error('Address 2 must be 100 characters or less');
+    } else{
+      setAddress2Error('');
+    }
+  };
+
+  const handleAddress1Change = (e) => {
+    const newAddress1 = e.target.value;
+    setAddress1(newAddress1);
+
+    if (newAddress1.trim() === '') {
+      setAddress1Error('Address 1 is required');
+    } else if (newAddress1.length > 100) {
+      setAddress1Error('Address 1 must be 100 characters or less');
+    } else {
+      setAddress1Error('');
+    }
+  };
+
+  const handleCityChange = (e) => {
+    const newCity = e.target.value;
+    setCity(newCity);
+  
+    if (newCity.trim() === '') {
+      setCityError('City is required');
+    } else if (newCity.length > 100) {
+      setCityError('City must be 100 characters or less');
+    } else {
+      setCityError('');
+    }
+  };
+
+  const handleZipcodeChange = (e) => {
+    const newZipcode = e.target.value;
+    setZipcode(newZipcode);
+  
+    if (newZipcode.trim() === '') {
+      setZipcodeError('Zipcode is required');
+    } else if (newZipcode.length < 5 || newZipcode.length > 9) {
+      setZipcodeError('Zipcode must be between 5 and 9 digits long');
+    } else if (!/^\d+$/.test(newZipcode)) {
+      setZipcodeError('Zipcode must be digits only');
+    } else {
+      setZipcodeError('');
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (fullNameError || address1Error || address2Error || cityError || zipcodeError) {
+      console.log('Cannot save profile due to errors');
+      return; 
+    }
+  
+    try {
+      const updatedProfileData = {
+        fullName,
+        address1,
+        address2,
+        city,
+        state,
+        zipcode
+      };
+  
+      const response = await axios.put('http://localhost:3000/api/profile/profile', updatedProfileData, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+  
+      console.log('Profile updated successfully:', response.data);
+  
+      // If the profile update is successful, exit edit mode
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
   };
 
   const handleCancelEdit = () => {
@@ -124,12 +222,13 @@ const UserProfile = () => {
             <input
               type="text"
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={handleFullNameChange}
               className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none"
             />
           ) : (
             fullName
           )}
+          {isEditing && fullNameError && <div className="text-red-500">{fullNameError}</div>}
         </div>
         <div className="text-gray-500">{username}</div> 
         <div className="text-gray-600 mt-4">
@@ -139,12 +238,13 @@ const UserProfile = () => {
               <input
                 type="text"
                 value={address1}
-                onChange={(e) => setAddress1(e.target.value)}
+                onChange={handleAddress1Change}
                 className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none"
               />
             ) : (
               address1
             )}
+            {isEditing && address1Error && <div className="text-red-500">{address1Error}</div>}
           </div>
           <div className="flex items-center mt-2 ml-4">
             <span className="font-semibold mr-2">Address 2:</span>
@@ -152,12 +252,13 @@ const UserProfile = () => {
               <input
                 type="text"
                 value={address2}
-                onChange={(e) => setAddress2(e.target.value)}
+                onChange={handleAddress2Change}
                 className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none"
               />
             ) : (
               address2
             )}
+            {isEditing && address2Error && <div className="text-red-500">{address2Error}</div>}
           </div>
           <div className="flex items-center mt-2 ml-4">
             <span className="font-semibold mr-2">City:</span>
@@ -165,12 +266,13 @@ const UserProfile = () => {
               <input
                 type="text"
                 value={city}
-                onChange={(e) => setCity(e.target.value)}
+                onChange={handleCityChange}
                 className="w-1/3 border border-gray-300 rounded-md py-2 px-3 focus:outline-none"
               />
             ) : (
               city
             )}
+            {isEditing && cityError && <div className="text-red-500">{cityError}</div>}
             <span className="font-semibold mx-2">State:</span>
             {isEditing ? (
               <select
@@ -192,12 +294,13 @@ const UserProfile = () => {
               <input
                 type="text"
                 value={zipcode}
-                onChange={(e) => setZipcode(e.target.value)}
+                onChange={handleZipcodeChange}
                 className="w-1/3 border border-gray-300 rounded-md py-2 px-3 focus:outline-none"
               />
             ) : (
               zipcode
             )}
+            {isEditing && zipcodeError && <div className="text-red-500">{zipcodeError}</div>}
           </div>
         </div>
         {isEditing ? (
