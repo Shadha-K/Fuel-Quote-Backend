@@ -64,7 +64,6 @@ async function updateProfile(req, res) {
     const { username, fullName, address1, address2, city, state, zipcode } = req.body;
 
     try {
-        let userProfileData = {};
         userProfileData.username = username;
         userProfileData.fullName = fullName;
         userProfileData.address1 = address1;
@@ -199,5 +198,6 @@ module.exports = {
     createQuote,
     getQuoteHistory,
     login,
-    register
+    register,
+    fuelQuoteData
 };

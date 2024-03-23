@@ -6,9 +6,18 @@ function validateLogin(req, res, next) {
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
-  
-   
-  
+    else if (username.length < 4 || username.length > 20){
+      return res.status(400).json({ error: 'Username must be between 4 and 20 characters' });
+    }
+    else if (!/^[a-zA-Z0-9_.-]+$/.test(username)){
+      return res.status(400).json({ error: 'Invalid characters in username. Use only letters, numbers, dots, dashes, or underscores.' });
+    }
+    else if (password.length < 4 || password.length > 20){
+      return res.status(400).json({ error: 'Password must be between 4 and 20 characters' });
+    }
+    else if (!/(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]/.test(password)){
+      return res.status(400).json({ error: 'Password must contain at least one letter, one number, and one special character' });
+    }
     next(); 
   }
 
@@ -17,6 +26,18 @@ function validateLogin(req, res, next) {
   
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
+    }
+    else if (username.length < 4 || username.length > 20){
+      return res.status(400).json({ error: 'Username must be between 4 and 20 characters' });
+    }
+    else if (!/^[a-zA-Z0-9_.-]+$/.test(username)){
+      return res.status(400).json({ error: 'Invalid characters in username. Use only letters, numbers, dots, dashes, or underscores.' });
+    }
+    else if (password.length < 4 || password.length > 20){
+      return res.status(400).json({ error: 'Password must be between 4 and 20 characters' });
+    }
+    else if (!/(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]/.test(password)){
+      return res.status(400).json({ error: 'Password must contain at least one letter, one number, and one special character' });
     }
   
     next(); 
@@ -28,38 +49,17 @@ function validateLogin(req, res, next) {
     if (!fullName || !address1 || !city || !state || !zipcode) {
       return res.status(400).json({ error: 'Full name, address, city, state, and zipcode are required' });
     }
-
-    if (fullName.trim() === '') {
-      return res.status(400).json({ error: 'Full Name is required' });
-    }
     if (fullName.length > 50) {
       return res.status(400).json({ error: 'Full name must be 50 characters or less' });
-    }
-  
-    if (address1.trim() === '') {
-      return res.status(400).json({ error: 'Address 1 is required' });
     }
     if (address1.length > 100) {
       return res.status(400).json({ error: 'Address 1 must be 100 characters or less' });
     }
-  
     if (address2 && address2.length > 100) {
       return res.status(400).json({ error: 'Address 2 must be 100 characters or less' });
     }
-  
-    if (city.trim() === '') {
-      return res.status(400).json({ error: 'City is required' });
-    }
     if (city.length > 100) {
       return res.status(400).json({ error: 'City must be 100 characters or less' });
-    }
-  
-    if (state.trim() === '') {
-      return res.status(400).json({ error: 'State is required' });
-    }
-  
-    if (zipcode.trim() === '') {
-      return res.status(400).json({ error: 'Zipcode is required' });
     }
     if (zipcode.length < 5 || zipcode.length > 9) {
       return res.status(400).json({ error: 'Zipcode must be between 5 and 9 digits long' });
@@ -103,43 +103,22 @@ function validateCompleteProfile(req, res, next) {
   if (!username || !fullName || !address1 || !city || !state || !zipcode) {
     return res.status(400).json({ error: 'Username, full name, address, city, state, and zipcode are required' });
   }
-
-  if (fullName.trim() === '') {
-    return res.status(400).json({ error: 'Full Name is required' });
-  }
-  if (fullName.length > 50) {
+  else if (fullName.length > 50) {
     return res.status(400).json({ error: 'Full name must be 50 characters or less' });
   }
-
-  if (address1.trim() === '') {
-    return res.status(400).json({ error: 'Address 1 is required' });
-  }
-  if (address1.length > 100) {
+  else if (address1.length > 100) {
     return res.status(400).json({ error: 'Address 1 must be 100 characters or less' });
   }
-
-  if (address2 && address2.length > 100) {
+  else if (address2 && address2.length > 100) {
     return res.status(400).json({ error: 'Address 2 must be 100 characters or less' });
   }
-
-  if (city.trim() === '') {
-    return res.status(400).json({ error: 'City is required' });
-  }
-  if (city.length > 100) {
+  else if (city.length > 100) {
     return res.status(400).json({ error: 'City must be 100 characters or less' });
   }
-
-  if (state.trim() === '') {
-    return res.status(400).json({ error: 'State is required' });
-  }
-
-  if (zipcode.trim() === '') {
-    return res.status(400).json({ error: 'Zipcode is required' });
-  }
-  if (zipcode.length < 5 || zipcode.length > 9) {
+  else if (zipcode.length < 5 || zipcode.length > 9) {
     return res.status(400).json({ error: 'Zipcode must be between 5 and 9 digits long' });
   }
-  if (!/^\d+$/.test(zipcode)) {
+  else if (!/^\d+$/.test(zipcode)) {
     return res.status(400).json({ error: 'Zipcode must be digits only' });
   }
 

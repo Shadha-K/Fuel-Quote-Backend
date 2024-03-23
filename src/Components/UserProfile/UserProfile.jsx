@@ -201,6 +201,7 @@ const UserProfile = () => {
   ];
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
     window.location.href = "/homepage";
     console.log("Logged out");
   };
