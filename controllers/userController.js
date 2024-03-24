@@ -61,10 +61,15 @@ async function getProfile(req, res) {
 }
 
 async function updateProfile(req, res) {
-    const { username, fullName, address1, address2, city, state, zipcode } = req.body;
+    const { fullName, address1, address2, city, state, zipcode } = req.body;
 
     try {
-        userProfileData.username = username;
+        // Validate data
+        if (!fullName || !address1 || !city || !state || !zipcode) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Update userProfileData with the new profile information
         userProfileData.fullName = fullName;
         userProfileData.address1 = address1;
         userProfileData.address2 = address2;
@@ -72,12 +77,17 @@ async function updateProfile(req, res) {
         userProfileData.state = state;
         userProfileData.zipcode = zipcode;
 
+        // Save the updated profile data to the database or wherever it's stored
+        // Example: await userProfileData.save();
+
+        // Respond with the updated profile data
         return res.status(200).json(userProfileData);
     } catch (error) {
         console.error('Error updating profile:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
+
 
 
 async function createQuote(req, res) {
@@ -122,7 +132,7 @@ async function register(req, res) {
             console.log('Username already taken:', username);
             return res.status(409).json({ error: 'Username already taken' }); 
         } else {
-            validCredentials.push({ username, password, profileComplete: false }); // Include profileComplete field
+            validCredentials.push({ username, password, profileComplete: false }); 
             console.log('User registered successfully:', username);
             return res.status(201).json({ message: 'User registered successfully' });
         }
@@ -141,9 +151,9 @@ async function login(req, res) {
             const token = generateToken(username);
             console.log('Login successful for user:', username);
             if (!user.profileComplete) {
-                return res.status(200).json({ token, redirectTo: '/registration' }); // Redirect to profile completion form
+                return res.status(200).json({ token, redirectTo: '/registration' }); 
             } else {
-                return res.status(200).json({ token, redirectTo: '/profile' }); // Redirect to profile page
+                return res.status(200).json({ token, redirectTo: '/profile' }); 
             }
         } else {
             console.log('Invalid credentials for user:', username);
@@ -175,7 +185,7 @@ async function completeProfile(req, res) {
             console.log('Profile completed and registered successfully:', username);
             return res.status(201).json({ message: 'Profile completed and registered successfully' });
         } else {
-            console.error('User not found:', username);
+            //console.error('User not found:', username);
             return res.status(404).json({ error: 'User not found' });
         }
     } catch (error) {
@@ -199,5 +209,7 @@ module.exports = {
     getQuoteHistory,
     login,
     register,
-    fuelQuoteData
+    fuelQuoteData,
+    validCredentials,
+    userProfiles
 };

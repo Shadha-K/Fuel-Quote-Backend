@@ -14,7 +14,7 @@ app.use('/api/auth', userRoutes);
 app.use('/api/profile', userRoutes);
 app.use('/api/fuel-quote', userRoutes);
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
