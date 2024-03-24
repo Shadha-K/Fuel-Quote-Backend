@@ -33,6 +33,15 @@ describe('POST /api/auth/login', () => {
     expect(response.body).toHaveProperty('token');
   });
 
+  test('Login with valid credentials and a complete profile', async () => {
+    const response = await request(app)
+      .post('/api/auth/login')
+      .send({ username: 'user_name123', password: 'Password123!' });
+    expect(response.statusCode).toBe(200);
+    expect(response.body.redirectTo).toBe('/profile');
+    expect(response.body).toHaveProperty('token');
+  });
+
   test('Login with invalid credentials', async () => {
     const response = await request(app)
       .post('/api/auth/login')

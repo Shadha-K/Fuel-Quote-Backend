@@ -1,6 +1,7 @@
 const { getProfile, createQuote, fuelQuoteData } = require('./userController');
 const { getQuoteHistory } = require('./userController');
 const { completeProfile, validCredentials, userProfiles } = require('./userController');
+const { updateProfile } = require('./userController');
 
 describe('getProfile function', () => {
     let req, res, userProfiles;
@@ -59,55 +60,55 @@ describe('getProfile function', () => {
 
         expect(res.status).toHaveBeenCalledWith(404);
         expect(res.json).toHaveBeenCalledWith({ error: 'User profile not found' });
-    });
+    });  
 
-    describe('createQuote function', () => {
-        let req, res;
-    
-        beforeEach(() => {
-            req = {
-                body: {
-                    username: 'user_name123',
-                    gallonsRequested: 50,
-                    deliveryAddress: '123 Main St City, ST 12345',
-                    deliveryDate: '3/18/2034',
-                    pricePerGallon: 2.13,
-                    totalAmountDue: 106.5
-                }
-            };
-            res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            };
-            jest.clearAllMocks(); 
-        });
-    
-       
-        const originalFuelQuoteData = [...fuelQuoteData]; 
-        beforeAll(() => {
-            fuelQuoteData.length = 0; 
-        });
-    
-        afterAll(() => {
-            fuelQuoteData.push(...originalFuelQuoteData); 
-        });
-    
-        test('should create a new fuel quote', async () => {
-            await createQuote(req, res);
-    
-            expect(res.status).toHaveBeenCalledWith(201);
-            expect(res.json).toHaveBeenCalledWith({
+});
+
+describe('createQuote function', () => {
+    let req, res;
+
+    beforeEach(() => {
+        req = {
+            body: {
                 username: 'user_name123',
                 gallonsRequested: 50,
                 deliveryAddress: '123 Main St City, ST 12345',
                 deliveryDate: '3/18/2034',
                 pricePerGallon: 2.13,
                 totalAmountDue: 106.5
-            });
-            expect(fuelQuoteData).toHaveLength(1);
-        });
-    });  
+            }
+        };
+        res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        };
+        jest.clearAllMocks(); 
+    });
 
+   
+    const originalFuelQuoteData = [...fuelQuoteData]; 
+    beforeAll(() => {
+        fuelQuoteData.length = 0; 
+    });
+
+    afterAll(() => {
+        fuelQuoteData.push(...originalFuelQuoteData); 
+    });
+
+    test('should create a new fuel quote', async () => {
+        await createQuote(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(201);
+        expect(res.json).toHaveBeenCalledWith({
+            username: 'user_name123',
+            gallonsRequested: 50,
+            deliveryAddress: '123 Main St City, ST 12345',
+            deliveryDate: '3/18/2034',
+            pricePerGallon: 2.13,
+            totalAmountDue: 106.5
+        });
+        expect(fuelQuoteData).toHaveLength(1);
+    });
 });
 
 describe('completeProfile function', () => {
@@ -204,5 +205,63 @@ describe('getQuoteHistory', () => {
         const originalImplementation = jest.requireActual('./userController');
         jest.spyOn(originalImplementation, 'getQuoteHistory').mockRejectedValue(mockedError);
         await getQuoteHistory(req, res);
+    });
+});
+
+describe('updateProfile', () => {
+    it('should update the user profile data and return the updated profile', async () => {
+        const req = {
+            body: {
+                username: 'user_name123',
+                fullName: 'Updated Name',
+                address1: 'Updated Address 1',
+                address2: 'Updated Address 2',
+                city: 'Updated City',
+                state: 'UP',
+                zipcode: '54321'
+            }
+        };
+        const res = {
+            status: jest.fn(() => res),
+            json: jest.fn()
+        };
+
+        const userProfileData = {
+            username: 'user_name123',
+            fullName: 'John Doe',
+            address1: '123 Main St',
+            address2: '',
+            city: 'City',
+            state: 'ST',
+            zipcode: '12345'
+        };
+
+        await updateProfile(req, res, userProfileData);
+
+        expect(userProfileData.fullName).toBe('Updated Name');
+        expect(userProfileData.address1).toBe('Updated Address 1');
+        expect(userProfileData.address2).toBe('Updated Address 2');
+        expect(userProfileData.city).toBe('Updated City');
+        expect(userProfileData.state).toBe('UP');
+        expect(userProfileData.zipcode).toBe('54321');
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(userProfileData);
+    });
+
+    it('should handle errors and return an error response', async () => {
+        const req = {
+            body: {} 
+        };
+        const res = {
+            status: jest.fn(() => res),
+            json: jest.fn()
+        };
+
+        const userProfileData = {};
+        await updateProfile(req, res, userProfileData);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({ error: 'Missing required fields' });
     });
 });

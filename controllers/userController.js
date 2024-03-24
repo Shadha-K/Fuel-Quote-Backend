@@ -60,35 +60,27 @@ async function getProfile(req, res) {
     }
 }
 
-async function updateProfile(req, res) {
-    const { fullName, address1, address2, city, state, zipcode } = req.body;
+async function updateProfile(req, res, userProfileData) {
+    const { username, fullName, address1, address2, city, state, zipcode } = req.body;
 
     try {
-        // Validate data
-        if (!fullName || !address1 || !city || !state || !zipcode) {
+        if (!username || !fullName || !address1 || !city || !state || !zipcode) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
-
-        // Update userProfileData with the new profile information
+        userProfileData.username = username;
         userProfileData.fullName = fullName;
         userProfileData.address1 = address1;
-        userProfileData.address2 = address2;
+        userProfileData.address2 = req.body.address2 || ''; 
         userProfileData.city = city;
         userProfileData.state = state;
         userProfileData.zipcode = zipcode;
 
-        // Save the updated profile data to the database or wherever it's stored
-        // Example: await userProfileData.save();
-
-        // Respond with the updated profile data
         return res.status(200).json(userProfileData);
     } catch (error) {
         console.error('Error updating profile:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
-
-
 
 async function createQuote(req, res) {
     const { username, gallonsRequested, deliveryAddress, deliveryDate, pricePerGallon, totalAmountDue } = req.body;
@@ -185,7 +177,6 @@ async function completeProfile(req, res) {
             console.log('Profile completed and registered successfully:', username);
             return res.status(201).json({ message: 'Profile completed and registered successfully' });
         } else {
-            //console.error('User not found:', username);
             return res.status(404).json({ error: 'User not found' });
         }
     } catch (error) {

@@ -167,6 +167,7 @@ const UserProfile = () => {
   
     try {
       const updatedProfileData = {
+        username,
         fullName,
         address1,
         address2,
@@ -174,7 +175,8 @@ const UserProfile = () => {
         state,
         zipcode
       };
-  
+      
+      console.log(`Profile token is ${localStorage.getItem('token')}`);
       const response = await axios.put('http://localhost:3000/api/profile/profile', updatedProfileData, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -183,7 +185,6 @@ const UserProfile = () => {
   
       console.log('Profile updated successfully:', response.data);
   
-      // If the profile update is successful, exit edit mode
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);

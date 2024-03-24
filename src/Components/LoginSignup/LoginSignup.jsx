@@ -117,7 +117,6 @@ const LoginSignup = () => {
           console.log('Login successful:', response.data);
           const token = response.data.token;
           localStorage.setItem('token', token);
-  
           const redirectTo = response.data.redirectTo;
           window.location.href = redirectTo; 
         } else {
