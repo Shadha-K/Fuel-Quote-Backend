@@ -17,11 +17,14 @@ const FuelRequest = () => {
       const response = await axios.get('http://localhost:3000/api/profile/profile');
 
       const userProfile = response.data;
-      const { address1, address2, city, state, zipcode, username } = userProfile;
-      const formattedAddress = `${address1}, ${address2 ? address2 + ', ' : ''}${city}, ${state} ${zipcode}`;
+      const { username, address_1, address_2, city, state, zipcode } = userProfile;
+      const formattedAddress = `${address_1}, ${address_2 ? address_2 + ', ' : ''}${city}, ${state} ${zipcode}`;
 
       setDeliveryAddress(formattedAddress);
       setUsername(username);
+      console.log("Address 1 is set as ", address_1);
+      console.log("Just set username as ", username);
+      console.log("Username should be ", userProfile.username);
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }
@@ -46,6 +49,7 @@ const FuelRequest = () => {
           'Content-Type': 'application/json'
         }
       };
+      console.log("About to POST fuel request for user ", username);
       const newQuoteData = {
         username,
         gallonsRequested,

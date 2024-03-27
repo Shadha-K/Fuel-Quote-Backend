@@ -47,9 +47,9 @@ const UserProfile = () => {
         }
       });
       const profileData = response.data;
-      setFullName(profileData.fullName);
-      setAddress1(profileData.address1);
-      setAddress2(profileData.address2);
+      setFullName(profileData.full_name);
+      setAddress1(profileData.address_1);
+      setAddress2(profileData.address_2);
       setCity(profileData.city);
       setState(profileData.state);
       setZipcode(profileData.zipcode);
@@ -77,17 +77,6 @@ const UserProfile = () => {
 
   const redirectToFuelQuoteForm = () => {
     window.location.href = "/userfuelrequest";
-  };
-
-  const handleImageChange = (event) => {
-    const image = event.target.files[0];
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      setProfilePicture(reader.result);
-    };
-
-    reader.readAsDataURL(image);
   };
 
   const handleEditProfile = () => {
@@ -211,14 +200,7 @@ const UserProfile = () => {
     <div className="container max-w-3xl mx-auto bg-gray-100 shadow-lg rounded-lg overflow-hidden">
       <img src={city_banner} alt="Banner" className="w-full h-48 object-cover object-center" />
       <div className="text-center mt-4">
-        <label htmlFor="file" className="block cursor-pointer bg-indigo-800 text-white px-6 py-3 mt-4 rounded-lg inline-block mb-4">
-          <span className="glyphicon glyphicon-camera"></span>
-          <span>Change Image</span>
-          <input id="file" type="file" onChange={handleImageChange} className="hidden" />
-        </label>
-        <div className="w-48 h-48 mx-auto overflow-hidden rounded-full border-4 border-white">
-          <img src={profilePicture} className="w-full h-full object-cover object-center" alt="User Profile" />
-        </div>
+      <div className="text-3xl font-semibold mt-6">Your Profile</div>
         <div className="text-xl font-semibold mt-2">
           {isEditing ? (
             <input
@@ -318,26 +300,30 @@ const UserProfile = () => {
         <button className="bg-gray-200 text-gray-800 px-6 py-3 mt-4 rounded-lg inline-block mt-4" onClick={handleLogout}>
           Logout
         </button>
-        <div className="text-xl font-semibold mt-6">Fuel Quote History</div>
+        <div className="text-3xl font-semibold mt-6">Fuel Quote History</div>
         {quoteHistory.length === 0 ? (
-        <p className="text-indigo-600 mt-2">
-          You have no past fuel quotes. Click the button below to order now.
-        </p>
-      ) : (
-        quoteHistory.map((quote, index) => (
-          <div key={index} className="bg-white p-6 mt-4 rounded-lg shadow-md max-w-3xl">
-            <div>Gallons requested: {quote.gallonsRequested}</div>
-            <div>Delivery address: {quote.deliveryAddress}</div>
-            <div>Delivery date: {quote.deliveryDate}</div>
-            <div>Suggested price/gallon: ${quote.pricePerGallon}</div>
-            <div>Total amount due: ${quote.totalAmountDue}</div>
-          </div>
-        ))
-      )}
+          <p className="text-indigo-600 mt-2">
+            You have no past fuel quotes. Click the button below to order now.
+          </p>
+        ) : (
+          quoteHistory.map((quote, index) => {
+            const formattedDeliveryDate = new Date(quote.delivery_date).toLocaleDateString('en-US');
+  
+            return (
+              <div key={index} className="bg-white p-6 mt-4 rounded-lg shadow-md max-w-3xl">
+                <div>Gallons requested: {quote.gallons_requested}</div>
+                <div>Delivery address: {quote.delivery_address}</div>
+                <div>Delivery date: {formattedDeliveryDate}</div>
+                <div>Suggested price/gallon: ${quote.price_per_gallon}</div>
+                <div>Total amount due: ${quote.total_amount_due}</div>
+              </div>
+            );
+          })
+        )}
         <button className="bg-indigo-800 text-white px-6 py-3 mt-4 rounded-lg inline-block" onClick={redirectToFuelQuoteForm}>Request Fuel</button>
       </div>
     </div>
   );
-};
+};  
 
 export default UserProfile;
