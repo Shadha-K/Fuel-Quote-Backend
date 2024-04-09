@@ -34,8 +34,8 @@ CREATE TABLE `client_information` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`userID`),
-  CONSTRAINT `client_information_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `user_credentials` (`userID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `fk_user_credentials` FOREIGN KEY (`userID`) REFERENCES `user_credentials` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,6 +44,7 @@ CREATE TABLE `client_information` (
 
 LOCK TABLES `client_information` WRITE;
 /*!40000 ALTER TABLE `client_information` DISABLE KEYS */;
+INSERT INTO `client_information` VALUES (16,'testuser','Random Random','Different Random Address','','Random City','HI','00000','2024-04-09 14:03:25','2024-04-09 14:03:56');
 /*!40000 ALTER TABLE `client_information` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -66,8 +67,8 @@ CREATE TABLE `fuel_quote` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`quote_id`),
   KEY `userID` (`userID`),
-  CONSTRAINT `fuel_quote_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `client_information` (`userID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `fk_client_information` FOREIGN KEY (`userID`) REFERENCES `client_information` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,6 +77,7 @@ CREATE TABLE `fuel_quote` (
 
 LOCK TABLES `fuel_quote` WRITE;
 /*!40000 ALTER TABLE `fuel_quote` DISABLE KEYS */;
+INSERT INTO `fuel_quote` VALUES (1,16,100.00,'undefined, Random City, HI 00000','2024-01-23',0.50,50.00,'2024-04-09 14:04:35','2024-04-09 14:04:35'),(2,16,1.00,'Different Random Address, Random City, HI 00000','2024-01-01',0.50,0.50,'2024-04-09 14:06:50','2024-04-09 14:06:50');
 /*!40000 ALTER TABLE `fuel_quote` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,12 +91,12 @@ DROP TABLE IF EXISTS `user_credentials`;
 CREATE TABLE `user_credentials` (
   `userID` int NOT NULL AUTO_INCREMENT,
   `username` varchar(20) NOT NULL,
-  `password` varchar(20) NOT NULL,
+  `password` varchar(60) NOT NULL,
   `profileComplete` tinyint(1) NOT NULL DEFAULT '0',
   `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`userID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -103,6 +105,7 @@ CREATE TABLE `user_credentials` (
 
 LOCK TABLES `user_credentials` WRITE;
 /*!40000 ALTER TABLE `user_credentials` DISABLE KEYS */;
+INSERT INTO `user_credentials` VALUES (15,'newtestuser','$2b$10$UoLf0ChLlUY6ttTbC3/4beJ73ftdTdzSjXrQ7qbKoqXfwZJWGo/gq',0,'2024-04-09 01:45:42','2024-04-09 01:45:42'),(16,'testuser','$2b$10$BrPQNsRA3NelGerw.5oisuogw/B0SZGcJ7DDOo..MXSy1mySP0Rm6',1,'2024-04-09 14:02:43','2024-04-09 14:03:25');
 /*!40000 ALTER TABLE `user_credentials` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -115,4 +118,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-25 12:58:05
+-- Dump completed on 2024-04-09  9:40:38

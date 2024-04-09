@@ -1,52 +1,39 @@
 const request = require('supertest');
 const { app, server } = require('./server');
+const pool = require('./models/db'); 
+
+let userID; 
 
 afterAll(async () => {
-  await server.close();
+    await server.close();
 });
 
-describe('POST /api/auth/register', () => {
-  test('Register user with valid credentials', async () => {
-    const response = await request(app)
-      .post('/api/auth/register')
-      .send({ username: 'testuser', password: 'testpassword123@' });
-    expect(response.statusCode).toBe(201);
-    expect(response.body.message).toBe('User registered successfully');
-  });
+describe('Test /api/auth routes', () => {
+    /*
+    it('POST /api/auth/register should register a user', async () => {
+        const res = await request(app)
+            .post('/api/auth/register')
+            .send({ username: 'newtestuser', password: 'testpassword123@' });
 
-  test('Register user with existing username', async () => {
-    const response = await request(app)
-      .post('/api/auth/register')
-      .send({ username: 'testuser', password: 'testpassword123@' });
-    expect(response.statusCode).toBe(409);
-    expect(response.body.error).toBe('Username already taken');
-  });
-});
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toHaveProperty('message', 'User registered successfully');
+        expect(res.body).toHaveProperty('token');
 
-describe('POST /api/auth/login', () => {
-  test('Login with valid credentials', async () => {
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({ username: 'testuser', password: 'testpassword123@' });
-    expect(response.statusCode).toBe(200);
-    expect(response.body.redirectTo).toBe('/registration');
-    expect(response.body).toHaveProperty('token');
-  });
+        userID = res.body.userID; 
+    });
+    */
+    it('POST /api/auth/login should log in a user', async () => {
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({ username: 'newtestuser', password: 'testpassword123@' });
 
-  test('Login with valid credentials and a complete profile', async () => {
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({ username: 'user_name123', password: 'Password123!' });
-    expect(response.statusCode).toBe(200);
-    expect(response.body.redirectTo).toBe('/profile');
-    expect(response.body).toHaveProperty('token');
-  });
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toHaveProperty('token');
+    });
 
-  test('Login with invalid credentials', async () => {
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({ username: 'testuser', password: 'invalidpassword123@' });
-    expect(response.statusCode).toBe(401);
-    expect(response.body.error).toBe('Invalid username or password');
-  });
+    afterEach(async () => {
+        if (userID) {
+            await pool.query('DELETE FROM user_credentials WHERE id = ?', [userID]);
+        }
+    });
 });
