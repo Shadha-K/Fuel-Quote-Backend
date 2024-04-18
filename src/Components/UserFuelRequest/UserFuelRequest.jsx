@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Pricing from '../Pricing/Pricing'; 
 
 const FuelRequest = () => {
-  const [gallonsRequested, setGallonsRequested] = useState(1);
+  const [gallonsRequested, setGallonsRequested] = useState('');
   const [dateRequested, setDateRequested] = useState('2024-01-01');
-  const [totalPrice, setTotalPrice] = useState(0);
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [userState, setUserState] = useState('');
   const [username, setUsername] = useState('');
+  const [pricePerGallon, setPricePerGallon] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   useEffect(() => {
     fetchUserProfile();
@@ -21,7 +22,6 @@ const FuelRequest = () => {
       const userProfile = response.data;
       const { address_1, address_2, city, state, zipcode, username } = userProfile;
       setUserState(state);
-      console.log("User's state is ", userState);
       const formattedAddress = `${address_1}, ${address_2 ? address_2 + ', ' : ''}${city}, ${state} ${zipcode}`;
 
       setDeliveryAddress(formattedAddress);
@@ -31,14 +31,26 @@ const FuelRequest = () => {
     }
   };
 
-  useEffect(() => {
-    updateTotalPrice();
-  }, [gallonsRequested, dateRequested]);
+  const handleGallonsChange = (e) => {
+    const inputGallons = e.target.value;
+    setGallonsRequested(inputGallons);
+    setIsButtonDisabled(inputGallons === '');
+  };
 
-  const updateTotalPrice = () => {
-    const pricing = new Pricing();
-    const total = pricing.calculateTotalPrice(gallonsRequested);
-    setTotalPrice(total.toFixed(2));
+  const handleGetQuote = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/fuel-quote/fuel-quote/preview', {
+        username,
+        userState,
+        gallonsRequested
+      });
+
+      const { pricePerGallon, totalAmountDue } = response.data;
+      setPricePerGallon(pricePerGallon);
+      setTotalPrice(totalAmountDue);
+    } catch (error) {
+      console.error('Error getting fuel quote:', error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -51,8 +63,6 @@ const FuelRequest = () => {
           'Content-Type': 'application/json'
         }
       };
-      const pricing = new Pricing();
-      const pricePerGallon = pricing.calculatePricePerGallon(gallonsRequested);
       const newQuoteData = {
         username,
         gallonsRequested,
@@ -90,7 +100,7 @@ const FuelRequest = () => {
               name="gallonsRequested"
               min="1"
               value={gallonsRequested}
-              onChange={(e) => setGallonsRequested(e.target.value)}
+              onChange={handleGallonsChange}
               required
               className="w-full bg-gray-200 px-3 py-1 rounded"
             />
@@ -125,7 +135,7 @@ const FuelRequest = () => {
               type="text"
               id="pricePerGallon"
               name="pricePerGallon"
-              value="$0.50"
+              value={`$${pricePerGallon}`}
               readOnly
               className="w-full bg-gray-200 px-3 py-1 rounded"
             />
@@ -142,11 +152,10 @@ const FuelRequest = () => {
             />
           </div>
         </div>
-        <div className="flex justify-between">
-        <button type="submit" className=" mt-4 px-6 py-3 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-900 focus:outline-none focus:bg-gray-900 transition duration-300 ease-in-out">Get Fuel Quote</button>
-          <button type="submit" className=" mt-4 px-6 py-3 bg-indigo-800 text-white font-semibold rounded-lg shadow-md hover:bg-purple-900 focus:outline-none focus:bg-purple-900 transition duration-300 ease-in-out">Submit</button>
-          <button type="button" onClick={handleCancel} className="mt-4 px-6 py-3 bg-white text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-200 focus:outline-none focus:bg-gray-200 transition duration-300 ease-in-out">Cancel</button>
-        </div>
+        
+        <button type="button" onClick={handleGetQuote} disabled={isButtonDisabled} className="mr-4 mt-4 px-6 py-3 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-900 focus:outline-none focus:bg-gray-900 transition duration-300 ease-in-out">Get Fuel Quote</button>
+        <button type="submit" disabled={isButtonDisabled} className="ml-4 mr-10 mt-4 px-6 py-3 bg-indigo-800 text-white font-semibold rounded-lg shadow-md hover:bg-purple-900 focus:outline-none focus:bg-purple-900 transition duration-300 ease-in-out ml-0">Submit</button>
+        <button type="button" onClick={handleCancel} className="ml-20 mt-4 px-6 py-3 bg-white text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-200 focus:outline-none focus:bg-gray-200 transition duration-300 ease-in-out">Cancel</button>
       </form>
     </div>
   );
