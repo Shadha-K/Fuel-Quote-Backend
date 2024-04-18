@@ -168,26 +168,29 @@ async function updateProfile(req, res, userProfileData) {
 }
 
 async function createQuote(req, res) {
-    const { username, gallonsRequested, deliveryAddress, deliveryDate, pricePerGallon, totalAmountDue } = req.body;
+    const { username, deliveryAddress, userState, deliveryDate } = req.body;
+    const gallonsRequested = parseFloat(req.body.gallonsRequested);
+    console.log("userState is ", userState);
+    console.log(deliveryAddress);
     console.log("Attempting to create fuel quote for ", username);
     try {
-        const pricing = new Pricing();
-        const pricePerGallon = pricing.calculatePricePerGallon(gallonsRequested);
-        const totalAmountDue = pricing.calculateTotalPrice(gallonsRequested);
         pool.query(
-            'SELECT userID FROM user_credentials WHERE username = ?',
+            'SELECT * FROM client_information WHERE username = ?',
             [username],
-            (error, userResults) => {
+            async (error, clientResults) => {
                 if (error) {
-                    console.error('Error retrieving user ID:', error);
+                    console.error('Error retrieving client information:', error);
                     return res.status(500).json({ error: 'Internal server error' });
                 }
-                if (userResults.length === 0) {
-                    console.error('User not found');
-                    return res.status(404).json({ error: 'User not found' });
-                }
+                const rateHistory = clientResults.length > 0;
 
-                const userID = userResults[0].userID;
+                const pricing = new Pricing(userState, rateHistory, gallonsRequested);
+
+                const pricePerGallon = pricing.calculatePricePerGallon();
+                const totalAmountDue = pricing.calculateTotalPrice();
+                console.log("Total amount due is ", totalAmountDue);
+
+                const userID = clientResults.length > 0 ? clientResults[0].userID : null;
 
                 const insertQuery = 'INSERT INTO fuel_quote (userID, gallons_requested, delivery_address, delivery_date, price_per_gallon, total_amount_due) VALUES (?, ?, ?, ?, ?, ?)';
                 const insertValues = [userID, gallonsRequested, deliveryAddress, deliveryDate, pricePerGallon, totalAmountDue];
@@ -244,6 +247,33 @@ async function getQuoteHistory(req, res) {
     }
 }
 
+async function previewQuote(req, res) {
+    const { username, userState, gallonsRequested } = req.body;
+
+    try {
+        const selectQuery = 'SELECT * FROM fuel_quote WHERE userID = (SELECT userID FROM user_credentials WHERE username = ?)';
+        const selectValues = [username];
+        pool.query(selectQuery, selectValues, async (error, quoteResults) => {
+            if (error) {
+                console.error('Error retrieving user quotes:', error);
+                return res.status(500).json({ error: 'Internal server error' });
+            }
+
+            const rateHistory = quoteResults.length > 0;
+
+            const pricing = new Pricing(userState, rateHistory, gallonsRequested);
+            const pricePerGallon = pricing.calculatePricePerGallon();
+            const totalAmountDue = pricing.calculateTotalPrice();
+
+            return res.status(200).json({ pricePerGallon, totalAmountDue });
+        });
+    } catch (error) {
+        console.error('Error previewing fuel quote:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+
 module.exports = {
     login,
     register,
@@ -252,5 +282,6 @@ module.exports = {
     updateProfile,
     createQuote,
     getQuoteHistory, 
+    previewQuote,
     pool
 };

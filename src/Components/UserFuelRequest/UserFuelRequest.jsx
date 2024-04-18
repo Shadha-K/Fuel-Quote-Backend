@@ -7,6 +7,7 @@ const FuelRequest = () => {
   const [dateRequested, setDateRequested] = useState('2024-01-01');
   const [totalPrice, setTotalPrice] = useState(0);
   const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [userState, setUserState] = useState('');
   const [username, setUsername] = useState('');
 
   useEffect(() => {
@@ -19,6 +20,8 @@ const FuelRequest = () => {
 
       const userProfile = response.data;
       const { address_1, address_2, city, state, zipcode, username } = userProfile;
+      setUserState(state);
+      console.log("User's state is ", userState);
       const formattedAddress = `${address_1}, ${address_2 ? address_2 + ', ' : ''}${city}, ${state} ${zipcode}`;
 
       setDeliveryAddress(formattedAddress);
@@ -54,6 +57,7 @@ const FuelRequest = () => {
         username,
         gallonsRequested,
         deliveryAddress,
+        userState,
         deliveryDate: dateRequested,
         pricePerGallon,
         totalAmountDue: totalPrice
@@ -139,6 +143,7 @@ const FuelRequest = () => {
           </div>
         </div>
         <div className="flex justify-between">
+        <button type="submit" className=" mt-4 px-6 py-3 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-900 focus:outline-none focus:bg-gray-900 transition duration-300 ease-in-out">Get Fuel Quote</button>
           <button type="submit" className=" mt-4 px-6 py-3 bg-indigo-800 text-white font-semibold rounded-lg shadow-md hover:bg-purple-900 focus:outline-none focus:bg-purple-900 transition duration-300 ease-in-out">Submit</button>
           <button type="button" onClick={handleCancel} className="mt-4 px-6 py-3 bg-white text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-200 focus:outline-none focus:bg-gray-200 transition duration-300 ease-in-out">Cancel</button>
         </div>
