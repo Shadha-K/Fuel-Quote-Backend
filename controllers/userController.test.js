@@ -557,8 +557,8 @@ describe('User Controller', () => {
                 gallonsRequested: 100,
                 deliveryAddress: '123 Main St',
                 deliveryDate: '2024-04-10',
-                pricePerGallon: 0.50,
-                totalAmountDue: 50
+                pricePerGallon: 1.74,
+                totalAmountDue: 174
             });
             
             mockQuery.mockRestore();
