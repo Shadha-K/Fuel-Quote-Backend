@@ -10,6 +10,8 @@ const FuelRequest = () => {
   const [pricePerGallon, setPricePerGallon] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [gallonsError, setGallonsError] = useState('');
+  const currentDate = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
     fetchUserProfile();
@@ -35,19 +37,25 @@ const FuelRequest = () => {
     const inputGallons = e.target.value;
     setGallonsRequested(inputGallons);
     setIsButtonDisabled(inputGallons === '');
+    
+    if (inputGallons < 0) {
+      setGallonsError('Gallons requested must be a positive number.');
+    } else {
+      setGallonsError('');
+    }
   };
 
   const handleGetQuote = async () => {
     try {
       const response = await axios.post('http://localhost:3000/api/fuel-quote/fuel-quote/preview', {
-        username,
-        userState,
-        gallonsRequested
+        username: username,
+        userState: userState,
+        gallonsRequested: parseInt(gallonsRequested) 
       });
 
       const { pricePerGallon, totalAmountDue } = response.data;
-      setPricePerGallon(pricePerGallon);
-      setTotalPrice(totalAmountDue);
+      setPricePerGallon(pricePerGallon.toFixed(2));
+      setTotalPrice(totalAmountDue.toFixed(2));
     } catch (error) {
       console.error('Error getting fuel quote:', error);
     }
@@ -84,6 +92,13 @@ const FuelRequest = () => {
     window.location.href = '/profile';
   };
 
+  useEffect(() => {
+    fetchUserProfile();
+    const currentDate = new Date().toISOString().split('T')[0];
+    setDateRequested(currentDate);
+  }, []);
+  
+
   return (
     <div className='container sm:max-w-2xl mx-auto px-20 py-16'>
       <div className='header text-center mb-5'>
@@ -104,19 +119,20 @@ const FuelRequest = () => {
               required
               className="w-full bg-gray-200 px-3 py-1 rounded"
             />
+            {gallonsError && <p className="text-red-500">{gallonsError}</p>}
           </div>
           <div className="input flex items-center mb-4">
             <label htmlFor="dateRequested" className="mr-2">Date Requested:</label>
             <input
-              type="date"
-              id="dateRequested"
-              name="dateRequested"
-              value={dateRequested}
-              onChange={(e) => setDateRequested(e.target.value)}
-              min="2024-01-01"
-              required
-              className="w-full bg-gray-200 px-3 py-1 rounded"
-            />
+            type="date"
+            id="dateRequested"
+            name="dateRequested"
+            value={dateRequested}
+            onChange={(e) => setDateRequested(e.target.value)}
+            min={currentDate} 
+            required
+            className="w-full bg-gray-200 px-3 py-1 rounded"
+          />
           </div>
           <div className="input flex items-center mb-4">
             <label htmlFor="deliveryAddress" className="mr-2">Delivery Address:</label>
