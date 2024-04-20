@@ -4,6 +4,7 @@ import { validateFuelQuote } from "./userMiddleware";
 import { authenticate } from "./userMiddleware";
 import { validateProfileUpdate } from "./userMiddleware";
 import { validateCompleteProfile } from "./userMiddleware";
+import { validatePreviewQuote } from "./userMiddleware";
 const jwt = require('jsonwebtoken');
 
 describe('validateLogin', () => {
@@ -586,3 +587,68 @@ describe('validateCompleteProfile', () => {
   });
 });
 
+describe('validatePreviewQuote', () => {
+  let req, res, next;
+
+  beforeEach(() => {
+    req = { body: {} };
+    res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    next = jest.fn();
+  });
+
+  test('should return 400 with error message if username is missing', () => {
+    req.body.userState = 'state';
+    req.body.gallonsRequested = 100;
+    validatePreviewQuote(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Username, userState, and gallonsRequested are required' });
+  });
+
+  test('should return 400 with error message if userState is missing', () => {
+    req.body.username = 'username';
+    req.body.gallonsRequested = 100;
+    validatePreviewQuote(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Username, userState, and gallonsRequested are required' });
+  });
+
+  test('should return 400 with error message if gallonsRequested is missing', () => {
+    req.body.username = 'username';
+    req.body.userState = 'state';
+    validatePreviewQuote(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Username, userState, and gallonsRequested are required' });
+  });
+
+  test('should return 400 with error message if gallonsRequested is not a number', () => {
+    req.body.username = 'username';
+    req.body.userState = 'state';
+    req.body.gallonsRequested = 'not_a_number';
+    validatePreviewQuote(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Gallons requested must be a positive number' });
+  });
+
+  test('should return 400 with error message if gallonsRequested is not a positive number', () => {
+    req.body.username = 'username';
+    req.body.userState = 'state';
+    req.body.gallonsRequested = -10;
+    validatePreviewQuote(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Gallons requested must be a positive number' });
+  });
+
+  test('should call next() if username, userState, and gallonsRequested are valid', () => {
+    req.body.username = 'username';
+    req.body.userState = 'state';
+    req.body.gallonsRequested = 100;
+    validatePreviewQuote(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+  });
+});
