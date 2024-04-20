@@ -566,7 +566,7 @@ describe('User Controller', () => {
             
             mockQuery.mockRestore();
         });
-        // this is giving me answers that are slightly different from whats expected in the tests, not sure why, didn't want to make more without understanding why it happened
+        // this is giving me answers that are slightly different from whats expected in the tests, not sure why, didn't want to make more without understanding why it happened, i might be doing the math wrong
       /*  it('should create a fuel quote successfully', async () => {
             const req = {
                 body: {
