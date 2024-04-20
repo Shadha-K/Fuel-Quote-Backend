@@ -40,7 +40,7 @@ describe('Pricing', () => {
             const totalPrice = pricing.calculateTotalPrice();
             expect(totalPrice).toEqual(3450); 
         });
-        it("calculates total price for out-of-state,more than 1000 gallons, and with history",()=>{
+        it("calculates total price for in state,more than 1000 gallons, and with history",()=>{
             const pricing = new Pricing("TX",false,2000);
             const totalPrice = pricing.calculateTotalPrice();
             expect(totalPrice).toEqual(3420); 
