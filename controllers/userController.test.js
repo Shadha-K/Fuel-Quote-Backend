@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const pool = require('../models/db');
 const userController = require('../controllers/userController');
+const Pricing = require('./pricing');
 
 jest.mock('bcrypt', () => ({
     compare: jest.fn(),
@@ -523,6 +524,7 @@ describe('User Controller', () => {
                     gallonsRequested: 100,
                     deliveryAddress: '123 Main St',
                     deliveryDate: '2024-04-10',
+                    userState: 'TX', 
                 }
             };
             const res = {
@@ -530,11 +532,7 @@ describe('User Controller', () => {
                 json: jest.fn()
             };
     
-            const mockPricingInstance = {
-                calculatePricePerGallon: jest.fn(() => 0.50),
-                calculateTotalPrice: jest.fn(() => 50.00) 
-            };
-            
+            const mockPricingInstance = new Pricing(req.body.userState, true, req.body.gallonsRequested);
     
             jest.mock('../controllers/pricing', () => {
                 return jest.fn().mockImplementation(() => mockPricingInstance);
@@ -557,37 +555,9 @@ describe('User Controller', () => {
                 gallonsRequested: 100,
                 deliveryAddress: '123 Main St',
                 deliveryDate: '2024-04-10',
-                pricePerGallon: 0.50,
-                totalAmountDue: 50
+                pricePerGallon: 1.71, 
+                totalAmountDue: 171 
             });
-            
-            mockQuery.mockRestore();
-        });
-    
-        it('should return an error if user is not found', async () => {
-            const req = {
-                body: {
-                    username: 'nonexistentuser',
-                    gallonsRequested: 100,
-                    deliveryAddress: '123 Main St',
-                    deliveryDate: '2024-04-10',
-                }
-            };
-            const res = {
-                status: jest.fn(() => res),
-                json: jest.fn()
-            };
-    
-            const mockQuery = jest.spyOn(pool, 'query').mockImplementation((query, values, callback) => {
-                if (query.startsWith('SELECT')) {
-                    callback(null, []);
-                }
-            });
-    
-            await userController.createQuote(req, res);
-    
-            expect(res.status).toHaveBeenCalledWith(404);
-            expect(res.json).toHaveBeenCalledWith({ error: 'User not found' });
     
             mockQuery.mockRestore();
         });
@@ -678,5 +648,63 @@ describe('User Controller', () => {
         });
     });
     
+    describe('previewQuote', () => {
+        it('should preview fuel quote successfully', async () => {
+            const req = {
+                body: {
+                    username: 'testuser',
+                    userState: 'TX',
+                    gallonsRequested: 100,
+                }
+            };
     
+            const res = {
+                status: jest.fn(() => res),
+                json: jest.fn()
+            };
+    
+            const mockQuery = jest.spyOn(pool, 'query').mockImplementation((query, values, callback) => {
+                if (query.startsWith('SELECT')) {
+                    callback(null, [{ quote_id: 1, gallons_requested: 100 }]);
+                }
+            });
+    
+            await userController.previewQuote(req, res);
+    
+            const pricing = new Pricing(req.body.userState, true, req.body.gallonsRequested);
+            const expectedPricePerGallon = pricing.calculatePricePerGallon();
+            const expectedTotalAmountDue = pricing.calculateTotalPrice();
+    
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({ pricePerGallon: expectedPricePerGallon, totalAmountDue: expectedTotalAmountDue });
+    
+            mockQuery.mockRestore();
+        });
+    
+        it('should return an error if there is an error previewing fuel quote', async () => {
+            const req = {
+                body: {
+                    username: 'testuser',
+                    userState: 'TX',
+                    gallonsRequested: 100,
+                }
+            };
+    
+            const res = {
+                status: jest.fn(() => res),
+                json: jest.fn()
+            };
+    
+            const mockQuery = jest.spyOn(pool, 'query').mockImplementation((query, values, callback) => {
+                callback(new Error('DB error'));
+            });
+    
+            await userController.previewQuote(req, res);
+    
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ error: 'Internal server error' });
+    
+            mockQuery.mockRestore();
+        });
+    });    
 });

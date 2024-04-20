@@ -125,11 +125,25 @@ function validateCompleteProfile(req, res, next) {
   next();
 }
 
+function validatePreviewQuote(req, res, next) {
+  const { username, userState, gallonsRequested } = req.body;
+
+  if (!username || !userState || !gallonsRequested) {
+      return res.status(400).json({ error: 'Username, userState, and gallonsRequested are required' });
+  }
+  if (typeof gallonsRequested !== 'number' || gallonsRequested <= 0) {
+      return res.status(400).json({ error: 'Gallons requested must be a positive number' });
+  }
+
+  next();
+}
+
 module.exports = {
   validateLogin,
   validateRegistration,
   validateProfileUpdate,
   validateFuelQuote,
   validateCompleteProfile,
+  validatePreviewQuote,
   authenticate
 };

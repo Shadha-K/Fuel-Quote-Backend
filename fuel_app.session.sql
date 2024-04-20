@@ -11,3 +11,6 @@ SELECT * FROM fuel_quote;
 DELETE FROM fuel_quote;
 DELETE FROM client_information;
 DELETE FROM user_credentials;
+
+-- @block
+DELETE FROM fuel_quote;

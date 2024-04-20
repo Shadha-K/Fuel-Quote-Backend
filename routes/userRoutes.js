@@ -12,6 +12,6 @@ router.post('/complete-profile', userMiddleware.validateCompleteProfile, userCon
 
 router.post('/fuel-quote', userMiddleware.authenticate, userMiddleware.validateFuelQuote, userController.createQuote);
 router.get('/fuel-quote/history', userMiddleware.authenticate, userController.getQuoteHistory);
-router.post('/fuel-quote/preview', userMiddleware.authenticate, userController.previewQuote);
+router.post('/fuel-quote/preview', userMiddleware.authenticate, userMiddleware.validatePreviewQuote, userController.previewQuote);
 
 module.exports = router;
