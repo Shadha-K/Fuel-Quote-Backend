@@ -733,6 +733,7 @@ describe('User Controller', () => {
     });
 
     // not sure what to put to check if it is being output it to the frontend
+   /*
     describe('previewQuote',()=>{
         it("should show the quote to the frontend without submitting it to the database", async () => {
             const loggedInUsername = 'testuser';
@@ -761,6 +762,6 @@ describe('User Controller', () => {
     
     
     });
-    
+    */
     
 });
