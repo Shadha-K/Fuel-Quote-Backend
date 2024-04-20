@@ -523,6 +523,9 @@ describe('User Controller', () => {
                     gallonsRequested: 100,
                     deliveryAddress: '123 Main St',
                     deliveryDate: '2024-04-10',
+                    state:"TX",
+                    hasHistory:true
+
                 }
             };
             const res = {
@@ -563,6 +566,56 @@ describe('User Controller', () => {
             
             mockQuery.mockRestore();
         });
+      /*  it('should create a fuel quote successfully', async () => {
+            const req = {
+                body: {
+                    username: 'testuser',
+                    gallonsRequested: 2000,
+                    deliveryAddress: '123 Main St',
+                    deliveryDate: '2024-04-10',
+                    state:"TX",
+                    rateHistory:false
+
+                }
+            };
+            const res = {
+                status: jest.fn(() => res),
+                json: jest.fn()
+            };
+    
+            const mockPricingInstance2 = {
+                calculatePricePerGallon: jest.fn(() => 1.74),
+                calculateTotalPrice: jest.fn(() => 3480) 
+            };
+            
+    
+            jest.mock('../controllers/pricing', () => {
+                return jest.fn().mockImplementation(() => mockPricingInstance2);
+            });
+    
+            const mockQuery = jest.spyOn(pool, 'query').mockImplementation((query, values, callback) => {
+                if (query.startsWith('SELECT')) {
+                    callback(null, [{ userID: 1 }]);
+                } else if (query.startsWith('INSERT')) {
+                    callback(null, { insertId: 1 });
+                }
+            });
+    
+            await userController.createQuote(req, res);
+    
+            expect(res.status).toHaveBeenCalledWith(201);
+            expect(res.json).toHaveBeenCalledWith({
+                quote_id: 1,
+                userID: 1,
+                gallonsRequested: 2000,
+                deliveryAddress: '123 Main St',
+                deliveryDate: '2024-04-10',
+                pricePerGallon: 1.74,
+                totalAmountDue: 3480
+            });
+            
+            mockQuery.mockRestore();
+        });*/
     
         it('should return an error if user is not found', async () => {
             const req = {
@@ -676,6 +729,36 @@ describe('User Controller', () => {
     
             mockQuery.mockRestore();
         });
+    });
+
+    // not sure what to put to check if it is being output it to the frontend
+    describe('previewQuote',()=>{
+        it("should show the quote to the frontend without submitting it to the database", async () => {
+            const loggedInUsername = 'testuser';
+
+            const req = {
+                user: {user: loggedInUsername}
+            }
+            const res = {
+                status: jest.fn(() => res),
+                json: jest.fn()
+            };
+
+        });
+        it("should show an error if it can't be output to the frontend", async () => {
+            const loggedInUsername = 'testuser';
+
+            const req = {
+                user: {user: loggedInUsername}
+            }
+            const res = {
+                status: jest.fn(() => res),
+                json: jest.fn()
+            };
+
+        });
+    
+    
     });
     
     
