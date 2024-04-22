@@ -10,6 +10,7 @@ import Registration from './Components/Registration/Registration';
 import UserProfile from './Components/UserProfile/UserProfile';
 import UserFuelRequest from './Components/UserFuelRequest/UserFuelRequest'
 import EditProfile from './Components/EditProfile/EditProfile';
+import ForgotPassword from './Components/LoginSignup/ForgotPassword';
 
 function Navigation() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route index element={<HomePage/>}/>
         <Route path="/homepage" element={<HomePage />} />
         <Route path="/login-signup" element={<LoginSignup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/userfuelrequest" element={<UserFuelRequest />} />

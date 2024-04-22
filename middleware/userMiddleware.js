@@ -42,6 +42,22 @@ function validateLogin(req, res, next) {
   
     next(); 
   }
+
+  function validatePasswordChange(req, res, next) {
+    const { username, newPassword } = req.body;
+
+    if (!username || !newPassword) {
+        return res.status(400).json({ error: 'Username and new password are required' });
+    }
+    else if (newPassword.length < 4 || newPassword.length > 20) {
+        return res.status(400).json({ error: 'New password must be between 4 and 20 characters' });
+    }
+    else if (!/(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]/.test(newPassword)) {
+        return res.status(400).json({ error: 'New password must contain at least one letter, one number, and one special character' });
+    }
+
+    next();
+  }
  
   function validateProfileUpdate(req, res, next) {
     const { fullName, address1, address2, city, state, zipcode } = req.body;
@@ -145,5 +161,6 @@ module.exports = {
   validateFuelQuote,
   validateCompleteProfile,
   validatePreviewQuote,
-  authenticate
+  authenticate,
+  validatePasswordChange
 };

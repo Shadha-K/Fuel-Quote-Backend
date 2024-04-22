@@ -708,4 +708,131 @@ describe('User Controller', () => {
         });
     });
     
+    describe('updatePassword', () => {
+        it('should update password successfully', async () => {
+            const req = {
+                body: {
+                    username: 'testuser',
+                    newPassword: 'newTestPassword123@'
+                }
+            };
+            const res = {
+                status: jest.fn(() => res),
+                json: jest.fn()
+            };
+    
+            const mockQuery = jest.spyOn(pool, 'query').mockImplementation((query, values, callback) => {
+                if (query.startsWith('SELECT')) {
+                    // Simulate user found in database
+                    callback(null, [{ username: 'testuser' }]);
+                } else if (query.startsWith('UPDATE')) {
+                    // Simulate password update success
+                    callback(null, []);
+                }
+            });
+    
+            await userController.updatePassword(req, res);
+    
+            expect(bcrypt.hash).toHaveBeenCalledWith('newTestPassword123@', 10, expect.any(Function));
+            expect(pool.query).toHaveBeenCalledWith(
+                'SELECT * FROM user_credentials WHERE username = ?',
+                ['testuser'],
+                expect.any(Function)
+            );
+            expect(pool.query).toHaveBeenCalledWith(
+                'UPDATE user_credentials SET password = ? WHERE username = ?',
+                ['hashedPassword', 'testuser'],
+                expect.any(Function)
+            );
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Password updated successfully' });
+    
+            mockQuery.mockRestore();
+        });
+    
+        it('should return an error if username is not found', async () => {
+            const req = {
+                body: {
+                    username: 'nonexistentuser',
+                    newPassword: 'newTestPassword123@'
+                }
+            };
+            const res = {
+                status: jest.fn(() => res),
+                json: jest.fn()
+            };
+    
+            const mockQuery = jest.spyOn(pool, 'query').mockImplementation((query, values, callback) => {
+                if (query.startsWith('SELECT')) {
+                    // Simulate user not found in database
+                    callback(null, []);
+                }
+            });
+    
+            await userController.updatePassword(req, res);
+    
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.json).toHaveBeenCalledWith({ error: 'Username not found' });
+    
+            mockQuery.mockRestore();
+        });
+    
+        it('should return an error if there is an error checking username', async () => {
+            const req = {
+                body: {
+                    username: 'testuser',
+                    newPassword: 'newTestPassword123@'
+                }
+            };
+            const res = {
+                status: jest.fn(() => res),
+                json: jest.fn()
+            };
+    
+            const mockQuery = jest.spyOn(pool, 'query').mockImplementation((query, values, callback) => {
+                if (query.startsWith('SELECT')) {
+                    // Simulate database error
+                    callback(new Error('DB error'));
+                }
+            });
+    
+            await userController.updatePassword(req, res);
+    
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ error: 'Error checking username' });
+    
+            mockQuery.mockRestore();
+        });
+    
+        it('should return an error if there is an error updating password', async () => {
+            const req = {
+                body: {
+                    username: 'testuser',
+                    newPassword: 'newTestPassword123@'
+                }
+            };
+            const res = {
+                status: jest.fn(() => res),
+                json: jest.fn()
+            };
+    
+            const mockQuery = jest.spyOn(pool, 'query').mockImplementation((query, values, callback) => {
+                if (query.startsWith('SELECT')) {
+                    // Simulate user found in database
+                    callback(null, [{ username: 'testuser' }]);
+                } else if (query.startsWith('UPDATE')) {
+                    // Simulate database error during password update
+                    callback(new Error('DB error'));
+                }
+            });
+    
+            await userController.updatePassword(req, res);
+    
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ error: 'Error updating password' });
+    
+            mockQuery.mockRestore();
+        });
+    });
+    
 });

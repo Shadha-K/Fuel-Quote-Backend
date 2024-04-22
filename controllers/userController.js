@@ -83,6 +83,48 @@ async function login(req, res) {
     }
 }
 
+async function updatePassword(req, res) {
+    const { username, newPassword } = req.body;
+
+    try {
+        const selectQuery = 'SELECT * FROM user_credentials WHERE username = ?';
+        const selectValues = [username];
+
+        pool.query(selectQuery, selectValues, (selectError, selectResults) => {
+            if (selectError) {
+                console.error('Error checking username:', selectError);
+                return res.status(500).json({ error: 'Error checking username' });
+            }
+
+            if (selectResults.length === 0) {
+                return res.status(404).json({ error: 'Username not found' });
+            }
+
+            bcrypt.hash(newPassword, 10, async (hashError, hashedPassword) => {
+                if (hashError) {
+                    console.error('Error hashing new password:', hashError);
+                    return res.status(500).json({ error: 'Error hashing new password' });
+                }
+
+                const updateQuery = 'UPDATE user_credentials SET password = ? WHERE username = ?';
+                const updateValues = [hashedPassword, username];
+
+                pool.query(updateQuery, updateValues, (updateError, updateResults) => {
+                    if (updateError) {
+                        console.error('Error updating password:', updateError);
+                        return res.status(500).json({ error: 'Error updating password' });
+                    }
+
+                    return res.status(200).json({ message: 'Password updated successfully' });
+                });
+            });
+        });
+    } catch (error) {
+        console.error('Error updating password:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 const completeProfile = async (req, res) => {
     const { username, fullName, address1, address2, city, state, zipcode } = req.body;
     const userAddress2 = address2 || ''; 
@@ -283,5 +325,6 @@ module.exports = {
     createQuote,
     getQuoteHistory, 
     previewQuote,
-    pool
+    pool,
+    updatePassword
 };

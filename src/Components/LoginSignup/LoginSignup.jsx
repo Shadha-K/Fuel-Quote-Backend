@@ -179,7 +179,7 @@ const LoginSignup = () => {
           {passwordValid && <img src={checkmark_icon} width={25} height={25} alt='checkmark' />}
         </div>
       </div>
-      {action === 'Sign Up' ? <div></div> : <div className='forgot-password text-gray-700 text-lg mt-4'>Forgot Password? <span className='text-indigo-800 cursor-pointer'>Click Here</span></div>}
+      {action === 'Sign Up' ? <div></div> : <div className='forgot-password text-gray-700 text-lg mt-4'>Forgot Password? <Link to="/forgot-password" className='text-indigo-800 cursor-pointer'>Click Here</Link></div>}
       <div className='submit-container flex gap-8 mt-12'>
         <div className={action === 'Login' ? 'submit bg-gray-400 text-gray-700' : 'submit bg-indigo-800 text-white'} onClick={() => handleSwitchAction('Sign Up')}>Sign Up</div>
         <div className={action === 'Sign Up' ? 'submit bg-gray-400 text-gray-700' : 'submit bg-indigo-800 text-white'} onClick={() => handleSwitchAction('Login')}>Login</div>

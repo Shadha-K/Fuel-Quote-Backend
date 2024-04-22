@@ -5,6 +5,7 @@ import { authenticate } from "./userMiddleware";
 import { validateProfileUpdate } from "./userMiddleware";
 import { validateCompleteProfile } from "./userMiddleware";
 import { validatePreviewQuote } from "./userMiddleware";
+import { validatePasswordChange } from "./userMiddleware";
 const jwt = require('jsonwebtoken');
 
 describe('validateLogin', () => {
@@ -163,6 +164,66 @@ describe('validateRegistration', () => {
     expect(next).toHaveBeenCalled();
   });
 })
+
+describe('validatePasswordChange', () => {
+  let req, res, next;
+
+  beforeEach(() => {
+    req = { body: {} };
+    res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    next = jest.fn();
+  });
+
+  test('should return 400 with error message if username is missing', () => {
+    validatePasswordChange(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Username and new password are required' });
+  });
+
+  test('should return 400 with error message if new password is missing', () => {
+    req.body.username = 'testUser';
+    validatePasswordChange(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Username and new password are required' });
+  });
+
+  test('should return 400 with error message if new password length is less than 4', () => {
+    req.body.username = 'testUser';
+    req.body.newPassword = 'pwd';
+    validatePasswordChange(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'New password must be between 4 and 20 characters' });
+  });
+
+  test('should return 400 with error message if new password length is greater than 20', () => {
+    req.body.username = 'testUser';
+    req.body.newPassword = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+    validatePasswordChange(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'New password must be between 4 and 20 characters' });
+  });
+
+  test('should return 400 with error message if new password does not meet complexity requirements', () => {
+    req.body.username = 'testUser';
+    req.body.newPassword = 'simplepassword';
+    validatePasswordChange(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'New password must contain at least one letter, one number, and one special character' });
+  });
+
+  test('should call next() if username and new password are valid', () => {
+    req.body.username = 'testUser';
+    req.body.newPassword = 'ValidPassword123!';
+    validatePasswordChange(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+  });
+});
 
 describe('validateProfileUpdate', () => {
   let req, res, next;

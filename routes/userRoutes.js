@@ -5,6 +5,7 @@ const userController = require('../controllers/userController');
 
 router.post('/login', userMiddleware.validateLogin, userController.login);
 router.post('/register', userMiddleware.validateRegistration, userController.register);
+router.put('/update-password', userMiddleware.validatePasswordChange, userController.updatePassword);
 
 router.get('/profile', userMiddleware.authenticate, userController.getProfile);
 router.put('/profile', userMiddleware.authenticate, userMiddleware.validateProfileUpdate, userController.updateProfile);
